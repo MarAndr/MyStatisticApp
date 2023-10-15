@@ -18,7 +18,7 @@ fun BottomNavGraph(navHostController: NavHostController, db: AppDatabase){
         composable(
             route = BottomBarScreen.Statistic.route
         ){
-            StatisticsScreen()
+            StatisticScreen(db)
         }
 
         composable(
