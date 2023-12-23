@@ -14,12 +14,37 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+
 @Composable
 fun StatisticScreen(db: AppDatabase) {
     val timers = db.timerDao().getAllTimers()
     val timersState = timers.collectAsState(initial = listOf()).value
-    SectionList(sections = timersState)
+    val finalList = mutableListOf<TimerData>()
+    var currentCategory = ""
+    var totalTimeInSeconds = 0L
+
+    timersState.forEach { timerData ->
+        if (timerData.category == currentCategory) {
+            // Если категория совпадает, добавьте время к общей продолжительности
+            totalTimeInSeconds += timerData.timeInSeconds
+        } else {
+            // Если категория отличается, добавьте предыдущую категорию и продолжительность
+            if (currentCategory.isNotEmpty()) {
+                finalList.add(TimerData(category = currentCategory, timeInSeconds = totalTimeInSeconds))
+            }
+            currentCategory = timerData.category
+            totalTimeInSeconds = timerData.timeInSeconds
+        }
+    }
+
+    // Добавьте последнюю категорию и продолжительность
+    if (currentCategory.isNotEmpty()) {
+        finalList.add(TimerData(category = currentCategory, timeInSeconds = totalTimeInSeconds))
+    }
+
+    SectionList(sections = finalList)
 }
+
 
 @Composable
 fun SectionList(sections: List<TimerData>) {

@@ -10,8 +10,8 @@ import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.mystatisticapp.AppDatabase
 import com.example.mystatisticapp.MyDialog
 import com.example.mystatisticapp.TimerData
@@ -27,18 +28,18 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun TimerApp(db: AppDatabase) {
+fun HomeScreen(db: AppDatabase) {
 
     val coroutineScope = rememberCoroutineScope()
-    val timers by db.timerDao().getAllTimers().collectAsState(emptyList())
     val selectedCategory = remember { mutableStateOf("") }
     var isRunning by remember { mutableStateOf(false) }
-    var currentTime by remember { mutableStateOf(0L) }
+    var currentTime by remember { mutableLongStateOf(0L) }
     var showDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
 
         // Create a list of categories
@@ -46,7 +47,7 @@ fun TimerApp(db: AppDatabase) {
 
         Text(
             text = if (isRunning) "Time: $currentTime" else "Timer Stopped",
-            style = MaterialTheme.typography.h1,
+            style = MaterialTheme.typography.h6,
             modifier = Modifier.padding(16.dp)
         )
 
@@ -61,7 +62,7 @@ fun TimerApp(db: AppDatabase) {
                     }
                 }
             }) {
-                Text(text = "Start")
+                Text(fontSize = 18.sp, text = "Start")
             }
         } else {
             Row(

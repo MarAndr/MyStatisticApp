@@ -1,6 +1,6 @@
 package com.example.mystatisticapp
 
-import TimerApp
+import HomeScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -12,7 +12,7 @@ fun BottomNavGraph(navHostController: NavHostController, db: AppDatabase){
         composable(
             route = BottomBarScreen.Home.route
         ){
-            TimerApp(db)
+            HomeScreen(db)
         }
 
         composable(
