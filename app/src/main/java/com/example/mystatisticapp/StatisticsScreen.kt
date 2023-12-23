@@ -19,52 +19,36 @@ import androidx.compose.ui.unit.dp
 fun StatisticScreen(db: AppDatabase) {
     val timers = db.timerDao().getAllTimers()
     val timersState = timers.collectAsState(initial = listOf()).value
-    val finalList = mutableListOf<TimerData>()
-    var currentCategory = ""
-    var totalTimeInSeconds = 0L
+    val categoryToTotalTime = mutableMapOf<String, Long>()
 
     timersState.forEach { timerData ->
-        if (timerData.category == currentCategory) {
-            // Если категория совпадает, добавьте время к общей продолжительности
-            totalTimeInSeconds += timerData.timeInSeconds
-        } else {
-            // Если категория отличается, добавьте предыдущую категорию и продолжительность
-            if (currentCategory.isNotEmpty()) {
-                finalList.add(TimerData(category = currentCategory, timeInSeconds = totalTimeInSeconds))
-            }
-            currentCategory = timerData.category
-            totalTimeInSeconds = timerData.timeInSeconds
-        }
+        categoryToTotalTime[timerData.category] =
+            categoryToTotalTime.getOrDefault(timerData.category, 0) + timerData.timeInSeconds
     }
 
-    // Добавьте последнюю категорию и продолжительность
-    if (currentCategory.isNotEmpty()) {
-        finalList.add(TimerData(category = currentCategory, timeInSeconds = totalTimeInSeconds))
-    }
-
-    SectionList(sections = finalList)
+    SectionList(sections = categoryToTotalTime)
 }
 
 
 @Composable
-fun SectionList(sections: List<TimerData>) {
+fun SectionList(sections: Map<String, Long>) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp)
     ) {
-        items(sections) { section ->
-            SectionItem(section)
+        items(sections.toList()) { (category, timeInSeconds) ->
+            SectionItem(category, timeInSeconds)
         }
     }
 }
 
 @Composable
-fun SectionItem(section: TimerData) {
+fun SectionItem(category: String, duration: Long) {
     Column(
         modifier = Modifier.padding(8.dp)
     ) {
-        Text(text = "Название раздела: ${section.category}")
+        Text(text = "Название раздела: $category")
         Spacer(modifier = Modifier.height(4.dp))
-        Text(text = "Продолжительность: ${section.timeInSeconds}")
+        Text(text = "Продолжительность: $duration")
     }
 }
