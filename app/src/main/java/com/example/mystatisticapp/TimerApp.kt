@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mystatisticapp.AppDatabase
+import com.example.mystatisticapp.Category
 import com.example.mystatisticapp.MyDialog
 import com.example.mystatisticapp.TimerData
 import kotlinx.coroutines.delay
@@ -92,7 +93,10 @@ fun HomeScreen(db: AppDatabase) {
                     showDialog = false
 
                     if (!createdCategory.isNullOrBlank()){
-                        //todo добавить логику по добавлению category в базу данных
+                        coroutineScope.launch {
+                            db.categoryDao().insertCategory(Category(name = createdCategory))
+                        }
+
                         Log.d("MY_TAG", "HomeScreen: createdCategory = $createdCategory")
                     } else if (selectedCategory.value.isNotEmpty()) {
                         // Если выбрана категория, сохраните данные в базу данных
