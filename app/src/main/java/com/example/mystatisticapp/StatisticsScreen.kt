@@ -49,6 +49,16 @@ fun SectionItem(category: String, duration: Long) {
     ) {
         Text(text = "Название раздела: $category")
         Spacer(modifier = Modifier.height(4.dp))
-        Text(text = "Продолжительность: $duration")
+        Text(text = "Продолжительность: ${formatTime(duration)}")
+    }
+}
+
+fun formatTime(seconds: Long): String {
+    val minutes = seconds / 60
+    val remainingSeconds = seconds % 60
+    return if (minutes > 0) {
+        "$minutes min"
+    } else {
+        "$remainingSeconds sec"
     }
 }

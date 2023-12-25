@@ -1,12 +1,11 @@
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
-import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +31,7 @@ fun HomeScreen(db: AppDatabase) {
 
     val coroutineScope = rememberCoroutineScope()
     val selectedCategory = remember { mutableStateOf("") }
+    var createdCategory by remember { mutableStateOf("") }
     var isRunning by remember { mutableStateOf(false) }
     var currentTime by remember { mutableLongStateOf(0L) }
     var showDialog by remember { mutableStateOf(false) }
@@ -46,7 +46,7 @@ fun HomeScreen(db: AppDatabase) {
         val categories = listOf("Work", "Cooking", "Exercise", "Study", "Other")
 
         Text(
-            text = if (isRunning) "Time: $currentTime" else "Timer Stopped",
+            text = if (isRunning) "$currentTime" else "",
             style = MaterialTheme.typography.h6,
             modifier = Modifier.padding(16.dp)
         )
@@ -90,7 +90,11 @@ fun HomeScreen(db: AppDatabase) {
                 items = categories,
                 onConfirmRequest = {
                     showDialog = false
-                    if (selectedCategory.value.isNotEmpty()) {
+
+                    if (!createdCategory.isNullOrBlank()){
+                        //todo добавить логику по добавлению category в базу данных
+                        Log.d("MY_TAG", "HomeScreen: createdCategory = $createdCategory")
+                    } else if (selectedCategory.value.isNotEmpty()) {
                         // Если выбрана категория, сохраните данные в базу данных
                         val newTimer = TimerData(category = selectedCategory.value, timeInSeconds = currentTime)
                         coroutineScope.launch {
@@ -102,6 +106,9 @@ fun HomeScreen(db: AppDatabase) {
                 showDialog = false
             }, onCategorySelected = {
                     selectedCategory.value = it
+                },
+                onCategoryCreated = {
+                    createdCategory = it
                 }
             )
         }
@@ -109,29 +116,29 @@ fun HomeScreen(db: AppDatabase) {
 }
 
 
-@Composable
-fun TimerItem(timer: TimerData) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        elevation = 4.dp
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(
-                text = "Category: ${timer.category}",
-                style = MaterialTheme.typography.h1
-            )
-            Text(
-                text = "Time: ${formatTime(timer.timeInSeconds.toInt())}", // Format time as needed
-                style = MaterialTheme.typography.body1
-            )
-        }
-    }
-}
+//@Composable
+//fun TimerItem(timer: TimerData) {
+//    Card(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(8.dp),
+//        elevation = 4.dp
+//    ) {
+//        Column(
+//            modifier = Modifier.padding(16.dp),
+//            verticalArrangement = Arrangement.spacedBy(8.dp)
+//        ) {
+//            Text(
+//                text = "Category: ${timer.category}",
+//                style = MaterialTheme.typography.h1
+//            )
+//            Text(
+//                text = "Time: ${formatTime(timer.timeInSeconds.toInt())}", // Format time as needed
+//                style = MaterialTheme.typography.body1
+//            )
+//        }
+//    }
+//}
 
 
 // Helper function to format time in seconds to a readable format (e.g., "25 minutes")
@@ -149,30 +156,30 @@ fun formatTime(seconds: Int): String {
 @Composable
 @Preview
 fun TimerAppPreview() {
-    val fakeTimers = listOf(
-        TimerData(category = "Work", timeInSeconds = 1500), // Example timer data
-        TimerData(category = "Cooking", timeInSeconds = 900) // Example timer data
-    )
-
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Timer Stopped", // Initially, the timer is stopped
-            style = MaterialTheme.typography.h1,
-            modifier = Modifier.padding(16.dp)
-        )
-
-        Button(onClick = {
-            // Simulate starting the timer
-        }) {
-            Text(text = "Start")
-        }
-
-        // Simulate a list of timers from the database
-        for (timer in fakeTimers) {
-            TimerItem(timer = timer)
-        }
-    }
+//    val fakeTimers = listOf(
+//        TimerData(category = "Work", timeInSeconds = 1500), // Example timer data
+//        TimerData(category = "Cooking", timeInSeconds = 900) // Example timer data
+//    )
+//
+//    Column(
+//        modifier = Modifier.fillMaxSize(),
+//        horizontalAlignment = Alignment.CenterHorizontally
+//    ) {
+//        Text(
+//            text = "", // Initially, the timer is stopped
+//            style = MaterialTheme.typography.h1,
+//            modifier = Modifier.padding(16.dp)
+//        )
+//
+//        Button(onClick = {
+//            // Simulate starting the timer
+//        }) {
+//            Text(text = "Start")
+//        }
+//
+//        // Simulate a list of timers from the database
+//        for (timer in fakeTimers) {
+//            TimerItem(timer = timer)
+//        }
+//    }
 }
