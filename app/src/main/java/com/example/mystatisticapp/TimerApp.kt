@@ -9,6 +9,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -44,7 +45,10 @@ fun HomeScreen(db: AppDatabase) {
     ) {
 
         // Create a list of categories
-        val categories = listOf("Work", "Cooking", "Exercise", "Study", "Other")
+//        val categories = listOf("Work", "Cooking", "Exercise", "Study", "Other")
+        val categoriesFlow = db.categoryDao().getAllCategories()
+        val categories = categoriesFlow.collectAsState(initial = listOf()).value
+        val categoriesNames: List<String> = categories.map { it.name }
 
         Text(
             text = if (isRunning) "$currentTime" else "",
@@ -88,13 +92,15 @@ fun HomeScreen(db: AppDatabase) {
         if (showDialog) {
             MyDialog(
                 duration = currentTime,
-                items = categories,
+                items = categoriesNames,
                 onConfirmRequest = {
                     showDialog = false
 
                     if (!createdCategory.isNullOrBlank()){
+                        val newTimer = TimerData(category = createdCategory, timeInSeconds = currentTime)
                         coroutineScope.launch {
                             db.categoryDao().insertCategory(Category(name = createdCategory))
+                            db.timerDao().insertTimer(newTimer)
                         }
 
                         Log.d("MY_TAG", "HomeScreen: createdCategory = $createdCategory")
