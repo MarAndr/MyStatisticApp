@@ -21,10 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mystatisticapp.AppDatabase
-import com.example.mystatisticapp.Category
-import com.example.mystatisticapp.MyDialog
-import com.example.mystatisticapp.TimerData
+import com.example.mystatisticapp.database.AppDatabase
+import com.example.mystatisticapp.database.Category
+import com.example.mystatisticapp.database.TimerData
+import com.example.mystatisticapp.ui.AddSurveyScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -90,7 +90,7 @@ fun HomeScreen(db: AppDatabase) {
         }
 
         if (showDialog) {
-            MyDialog(
+            AddSurveyScreen(
                 duration = currentTime,
                 items = categoriesNames,
                 onConfirmRequest = {

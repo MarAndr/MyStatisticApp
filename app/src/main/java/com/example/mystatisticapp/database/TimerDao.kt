@@ -1,4 +1,4 @@
-package com.example.mystatisticapp
+package com.example.mystatisticapp.database
 
 import androidx.room.Dao
 import androidx.room.Insert

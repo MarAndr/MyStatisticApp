@@ -1,4 +1,4 @@
-package com.example.mystatisticapp
+package com.example.mystatisticapp.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

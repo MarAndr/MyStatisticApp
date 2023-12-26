@@ -1,4 +1,4 @@
-package com.example.mystatisticapp
+package com.example.mystatisticapp.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun MyDialog(
+fun AddSurveyScreen(
     duration: Long,
     items: List<String>,
     onCategoryCreated: (String) -> Unit,

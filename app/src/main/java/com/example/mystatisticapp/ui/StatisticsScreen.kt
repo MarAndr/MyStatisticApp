@@ -1,4 +1,4 @@
-package com.example.mystatisticapp
+package com.example.mystatisticapp.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.mystatisticapp.database.AppDatabase
 
 
 @Composable

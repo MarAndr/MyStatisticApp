@@ -1,4 +1,4 @@
-package com.example.mystatisticapp
+package com.example.mystatisticapp.ui
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
