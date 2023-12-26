@@ -17,7 +17,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mystatisticapp.database.AppDatabase
@@ -139,71 +138,3 @@ fun HomeScreen(db: AppDatabase) {
     }
 }
 
-
-//@Composable
-//fun TimerItem(timer: TimerData) {
-//    Card(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(8.dp),
-//        elevation = 4.dp
-//    ) {
-//        Column(
-//            modifier = Modifier.padding(16.dp),
-//            verticalArrangement = Arrangement.spacedBy(8.dp)
-//        ) {
-//            Text(
-//                text = "Category: ${timer.category}",
-//                style = MaterialTheme.typography.h1
-//            )
-//            Text(
-//                text = "Time: ${formatTime(timer.timeInSeconds.toInt())}", // Format time as needed
-//                style = MaterialTheme.typography.body1
-//            )
-//        }
-//    }
-//}
-
-
-// Helper function to format time in seconds to a readable format (e.g., "25 minutes")
-@Composable
-fun formatTime(seconds: Int): String {
-    val minutes = seconds / 60
-    val remainingSeconds = seconds % 60
-    return if (minutes > 0) {
-        "$minutes minutes"
-    } else {
-        "$remainingSeconds seconds"
-    }
-}
-
-@Composable
-@Preview
-fun TimerAppPreview() {
-//    val fakeTimers = listOf(
-//        TimerData(category = "Work", timeInSeconds = 1500), // Example timer data
-//        TimerData(category = "Cooking", timeInSeconds = 900) // Example timer data
-//    )
-//
-//    Column(
-//        modifier = Modifier.fillMaxSize(),
-//        horizontalAlignment = Alignment.CenterHorizontally
-//    ) {
-//        Text(
-//            text = "", // Initially, the timer is stopped
-//            style = MaterialTheme.typography.h1,
-//            modifier = Modifier.padding(16.dp)
-//        )
-//
-//        Button(onClick = {
-//            // Simulate starting the timer
-//        }) {
-//            Text(text = "Start")
-//        }
-//
-//        // Simulate a list of timers from the database
-//        for (timer in fakeTimers) {
-//            TimerItem(timer = timer)
-//        }
-//    }
-}
