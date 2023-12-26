@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -16,6 +18,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,6 +62,17 @@ fun HomeScreen(db: AppDatabase) {
             ""
         }
 
+        val buttonStyle = ButtonDefaults.buttonColors(
+            backgroundColor = Color.Black,
+            contentColor = Color.White
+        )
+        val buttonTextStyle = LocalTextStyle.current.copy(
+            fontSize = 40.sp,
+            fontFamily = FontFamily.Monospace,
+            color = Color.White
+        )
+
+
         Text(
             fontFamily = FontFamily.Monospace,
             text = formattedTime,
@@ -67,17 +81,19 @@ fun HomeScreen(db: AppDatabase) {
         )
 
         if (!isRunning) {
-            Button(onClick = {
-                isRunning = true
-                currentTime = 0L
-                coroutineScope.launch {
-                    while (isRunning) {
-                        delay(1000)
-                        currentTime++
+            Button(
+                onClick = {
+                    isRunning = true
+                    currentTime = 0L
+                    coroutineScope.launch {
+                        while (isRunning) {
+                            delay(1000)
+                            currentTime++
+                        }
                     }
-                }
-            }) {
-                Text(fontSize = 18.sp, text = "Start")
+                }, colors = buttonStyle
+            ) {
+                Text(text = "Start", style = buttonTextStyle)
             }
         } else {
             Row(
@@ -87,14 +103,14 @@ fun HomeScreen(db: AppDatabase) {
                 Button(onClick = {
                     isRunning = false
                     showDialog = true // Show the dialog
-                }) {
-                    Text(text = "Stop")
+                }, colors = buttonStyle) {
+                    Text(text = "Stop", style = buttonTextStyle)
                 }
 
                 Button(onClick = {
                     isRunning = false
-                }) {
-                    Text(text = "Pause")
+                }, colors = buttonStyle) {
+                    Text(text = "Pause", style = buttonTextStyle)
                 }
             }
         }
