@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.room.Room
 import com.example.mystatisticapp.database.AppDatabase
+import com.example.mystatisticapp.ui.theme.MyStatisticAppTheme
 
 
 class MainActivity : ComponentActivity() {
@@ -20,7 +21,9 @@ class MainActivity : ComponentActivity() {
         ).build()
 
         setContent {
-            MainScreen(db = db)
+            MyStatisticAppTheme {
+                MainScreen(db = db)
+            }
         }
     }
 }
