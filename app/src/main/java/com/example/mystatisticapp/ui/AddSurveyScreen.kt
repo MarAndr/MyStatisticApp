@@ -20,19 +20,17 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun AddSurveyScreen(
-    duration: Long,
     items: List<String>,
     onCategoryCreated: (String) -> Unit,
     onCategorySelected: (String) -> Unit,
     onConfirmRequest: () -> Unit,
-    onDismissRequest: () -> Unit
+    onCancelClick: () -> Unit
 ) {
 
     var createdCategory by remember {
         mutableStateOf("")
     }
 
-    // Display the list in the text part of the dialog
     Column(modifier = Modifier.background(Color.White)) {
         Text(text = "Выберите категорию или создайте новую")
         Spacer(modifier = Modifier.height(16.dp))
@@ -49,23 +47,17 @@ fun AddSurveyScreen(
                 modifier = Modifier.clickable {
                     onCategorySelected(item)
                     onConfirmRequest()
-                } // Attach click listener
+                }
             )
         }
 
         Button(
-            onClick = {
-                // Обработка нажатия на кнопку "ОК"
-                onConfirmRequest()
-            }
+            onClick = { onConfirmRequest() }
         ) {
             Text(text = "ОК")
         }
         Button(
-            onClick = {
-                // Обработка нажатия на кнопку "Отмена"
-                onDismissRequest()
-            }
+            onClick = { onCancelClick() }
         ) {
             Text(text = "Отмена")
         }

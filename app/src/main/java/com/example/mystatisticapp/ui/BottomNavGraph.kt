@@ -13,7 +13,7 @@ fun BottomNavGraph(navHostController: NavHostController, db: AppDatabase){
         composable(
             route = BottomBarScreen.Home.route
         ){
-            HomeScreen(db)
+            HomeScreen(db, navHostController)
         }
 
         composable(
