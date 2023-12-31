@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">TrackDailyHub</string>
+    <string name="start_screen">Start Screen</string>
+    <string name="statistic_screen">Statistic Screen</string>
+</resources>

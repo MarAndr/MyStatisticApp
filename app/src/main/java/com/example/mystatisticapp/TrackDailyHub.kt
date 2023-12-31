@@ -2,7 +2,14 @@ package com.example.mystatisticapp
 
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -12,9 +19,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.mystatisticapp.database.AppDatabase
 import com.example.mystatisticapp.database.Category
@@ -49,7 +61,34 @@ fun TrackDailyHub(
         ""
     }
 
-    Scaffold(bottomBar = {}) { innerPadding ->
+    Scaffold(bottomBar = {
+        BottomNavigation {
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentDestination = navBackStackEntry?.destination
+
+            items.forEach { screen ->
+                BottomNavigationItem(
+                    icon = { Icon(screen.icon, contentDescription = null) },
+                    label = { Text(stringResource(screen.resourceId)) },
+                    selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                    onClick = {
+                        navController.navigate(screen.route) {
+                            // Pop up to the start destination of the graph to
+                            // avoid building up a large stack of destinations
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            // Avoid multiple copies of the same destination when
+                            // reselecting the same item
+                            launchSingleTop = true
+                            // Restore state when reselecting a previously selected item
+                            restoreState = true
+                        }
+                    }
+                )
+            }
+        }
+    }) { innerPadding ->
         NavHost(
             navController = navController,
             startDestination = TrackDailyHubDestination.StartScreen.route,
@@ -114,3 +153,13 @@ fun TrackDailyHub(
 
     }
 }
+
+sealed class BottomNavItem(val route: String, val resourceId: Int, val icon: ImageVector) {
+    object StartScreen : BottomNavItem(TrackDailyHubDestination.StartScreen.route, R.string.start_screen, Icons.Default.Home)
+    object StatisticScreen : BottomNavItem(TrackDailyHubDestination.StatisticScreen.route, R.string.statistic_screen, Icons.Default.ThumbUp)
+}
+
+val items = listOf(
+    BottomNavItem.StartScreen,
+    BottomNavItem.StatisticScreen
+)
