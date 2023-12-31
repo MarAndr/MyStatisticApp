@@ -58,6 +58,7 @@ fun TrackDailyHub(
     val categoriesFlow = db.categoryDao().getAllCategories()
     val categories = categoriesFlow.collectAsState(initial = listOf()).value
     val categoriesNames: List<String> = categories.map { it.name }
+    var showBottomBar by remember { mutableStateOf(true) }
 
     val formattedTime = if (isRunning) {
         val hours = currentTime / 3600
@@ -77,25 +78,27 @@ fun TrackDailyHub(
             )
         },
         bottomBar = {
-            BottomNavigation {
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val currentDestination = navBackStackEntry?.destination
+            if (showBottomBar){
+                BottomNavigation {
+                    val navBackStackEntry by navController.currentBackStackEntryAsState()
+                    val currentDestination = navBackStackEntry?.destination
 
-                items.forEach { screen ->
-                    BottomNavigationItem(
-                        icon = { Icon(screen.icon, contentDescription = null) },
-                        label = { Text(stringResource(screen.resourceId)) },
-                        selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-                        onClick = {
-                            navController.navigate(screen.route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
+                    items.forEach { screen ->
+                        BottomNavigationItem(
+                            icon = { Icon(screen.icon, contentDescription = null) },
+                            label = { Text(stringResource(screen.resourceId)) },
+                            selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                            onClick = {
+                                navController.navigate(screen.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }) { innerPadding ->
@@ -129,6 +132,7 @@ fun TrackDailyHub(
                 )
             }
             composable(route = TrackDailyHubDestination.AddSurveyScreen.route) {
+                showBottomBar = false
                 AddSurveyScreen(
                     items = categoriesNames,
                     onCategoryCreated = { createdCategory = it },
