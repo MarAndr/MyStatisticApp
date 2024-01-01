@@ -43,6 +43,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun TrackDailyHub(
     navController: NavHostController = rememberNavController(),
+//    viewModel: TrackDailyViewModel = viewModel(),
     db: AppDatabase,
 ) {
 
@@ -79,7 +80,7 @@ fun TrackDailyHub(
             )
         },
         bottomBar = {
-            if (showBottomBar){
+            if (showBottomBar) {
                 BottomNavigation {
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentDestination = navBackStackEntry?.destination
@@ -149,7 +150,8 @@ fun TrackDailyHub(
                                 TimerData(category = createdCategory, timeInSeconds = currentTime)
                             coroutineScope.launch {
                                 snackBarHostState.showSnackbar("Вы добавили новый замер в новую категорию: ${createdCategory}")
-                                db.categoryDao().insertUniqueCategory(Category(name = createdCategory))
+                                db.categoryDao()
+                                    .insertUniqueCategory(Category(name = createdCategory))
                                 db.timerDao().insertTimer(newTimer)
                             }
                         } else if (selectedCategory.value.isNotEmpty()) {
