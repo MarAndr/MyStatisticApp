@@ -1,12 +1,11 @@
-package com.example.mystatisticapp.database
+package com.tracker.trackDailyHub.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class TimerData(
+data class Category(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val category: String,
-    val timeInSeconds: Long
+    val name: String,
 )

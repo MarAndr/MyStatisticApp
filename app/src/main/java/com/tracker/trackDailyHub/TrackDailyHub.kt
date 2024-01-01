@@ -1,4 +1,4 @@
-package com.example.mystatisticapp
+package com.tracker.trackDailyHub
 
 
 import androidx.compose.foundation.layout.padding
@@ -31,11 +31,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.mystatisticapp.database.AppDatabase
-import com.example.mystatisticapp.database.Category
-import com.example.mystatisticapp.database.TimerData
-import com.example.mystatisticapp.ui.AddSurveyScreen
-import com.example.mystatisticapp.ui.StatisticScreen
+import com.tracker.trackDailyHub.database.AppDatabase
+import com.tracker.trackDailyHub.database.Category
+import com.tracker.trackDailyHub.database.TimerData
+import com.tracker.trackDailyHub.ui.AddSurveyScreen
+import com.tracker.trackDailyHub.ui.StatisticScreen
+import com.tracker.trackdailyhub.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

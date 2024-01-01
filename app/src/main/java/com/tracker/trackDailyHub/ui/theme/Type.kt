@@ -1,4 +1,4 @@
-package com.example.mystatisticapp.ui.theme
+package com.tracker.trackDailyHub.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

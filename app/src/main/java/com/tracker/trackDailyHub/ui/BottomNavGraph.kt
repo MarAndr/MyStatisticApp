@@ -1,11 +1,11 @@
-package com.example.mystatisticapp.ui
+package com.tracker.trackDailyHub.ui
 
 import HomeScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.mystatisticapp.database.AppDatabase
+import com.tracker.trackDailyHub.database.AppDatabase
 
 @Composable
 fun BottomNavGraph(navHostController: NavHostController, db: AppDatabase){

@@ -1,4 +1,4 @@
-package com.example.mystatisticapp
+package com.tracker.trackDailyHub
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,8 +8,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.room.Room
-import com.example.mystatisticapp.database.AppDatabase
-import com.example.mystatisticapp.ui.theme.MyStatisticAppTheme
+import com.tracker.trackDailyHub.database.AppDatabase
+import com.tracker.trackDailyHub.ui.theme.MyStatisticAppTheme
 
 
 class MainActivity : ComponentActivity() {

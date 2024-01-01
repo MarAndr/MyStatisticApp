@@ -9,13 +9,13 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.mystatisticapp.database.AppDatabase
-import com.example.mystatisticapp.database.Category
-import com.example.mystatisticapp.database.TimerData
-import com.example.mystatisticapp.navigation.HomeScreenDestination
-import com.example.mystatisticapp.ui.AddSurveyScreen
-import com.example.mystatisticapp.ui.MainScreenNav
-import com.example.mystatisticapp.ui.StartHomeScreen
+import com.tracker.trackDailyHub.database.AppDatabase
+import com.tracker.trackDailyHub.database.Category
+import com.tracker.trackDailyHub.database.TimerData
+import com.tracker.trackDailyHub.navigation.HomeScreenDestination
+import com.tracker.trackDailyHub.ui.AddSurveyScreen
+import com.tracker.trackDailyHub.ui.MainScreenNav
+import com.tracker.trackDailyHub.ui.StartHomeScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

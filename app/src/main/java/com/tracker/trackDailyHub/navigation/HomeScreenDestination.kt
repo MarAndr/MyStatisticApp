@@ -1,4 +1,4 @@
-package com.example.mystatisticapp.navigation
+package com.tracker.trackDailyHub.navigation
 
 sealed class HomeScreenDestination(val route: String) {
     object StartHomeScreen : HomeScreenDestination("HomeScreen")

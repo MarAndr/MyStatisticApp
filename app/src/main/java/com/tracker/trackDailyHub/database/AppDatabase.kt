@@ -1,4 +1,4 @@
-package com.example.mystatisticapp.database
+package com.tracker.trackDailyHub.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

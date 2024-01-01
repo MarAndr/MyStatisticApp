@@ -1,4 +1,4 @@
-package com.example.mystatisticapp
+package com.tracker.trackDailyHub
 
 sealed class TrackDailyHubDestination(val route: String){
     object StartScreen: TrackDailyHubDestination("StartScreen")

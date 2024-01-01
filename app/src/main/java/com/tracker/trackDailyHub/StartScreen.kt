@@ -1,4 +1,4 @@
-package com.example.mystatisticapp
+package com.tracker.trackDailyHub
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

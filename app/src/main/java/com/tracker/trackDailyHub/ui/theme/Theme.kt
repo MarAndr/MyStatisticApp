@@ -1,4 +1,4 @@
-package com.example.mystatisticapp.ui.theme
+package com.tracker.trackDailyHub.ui.theme
 
 import android.app.Activity
 import android.os.Build

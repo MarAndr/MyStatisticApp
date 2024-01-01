@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.mystatisticapp'
+    namespace 'com.tracker.trackdailyhub'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.mystatisticapp"
+        applicationId "com.tracker.trackdailyhub"
         minSdk 24
         targetSdk 34
         versionCode 1

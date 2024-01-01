@@ -19,9 +19,9 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.mystatisticapp.database.AppDatabase
-import com.example.mystatisticapp.ui.BottomBarScreen
-import com.example.mystatisticapp.ui.BottomNavGraph
+import com.tracker.trackDailyHub.database.AppDatabase
+import com.tracker.trackDailyHub.ui.BottomBarScreen
+import com.tracker.trackDailyHub.ui.BottomNavGraph
 
 @Composable
 fun MainScreen(db: AppDatabase) {
