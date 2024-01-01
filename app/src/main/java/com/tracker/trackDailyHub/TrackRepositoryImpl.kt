@@ -1,17 +1,19 @@
 package com.tracker.trackDailyHub
 
 import com.tracker.trackDailyHub.database.Category
+import com.tracker.trackDailyHub.database.CategoryDao
+import com.tracker.trackDailyHub.database.TimerDao
 import com.tracker.trackDailyHub.database.TimerData
 
 class TrackRepositoryImpl constructor(
-//    private val categoryDao: CategoryDao,
-//    private val timerDao: TrackDao,
+    private val categoryDao: CategoryDao,
+    private val timerDao: TimerDao,
 ) : ITrackRepository {
     override suspend fun insertCategory(category: Category) {
-//        categoryDao.insertCategory(category)
+        categoryDao.insertUniqueCategory(category)
     }
 
     override suspend fun insertTrack(track: TimerData) {
-//        timerDao.insertTrack(track)
+        timerDao.insertTimer(track)
     }
 }
