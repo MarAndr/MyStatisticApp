@@ -110,6 +110,7 @@ fun TrackDailyHub(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(route = TrackDailyHubDestination.StartScreen.route) {
+                showBottomBar = true
                 StartScreen(
                     time = formattedTime,
                     isRunning = isRunning,
