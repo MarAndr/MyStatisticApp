@@ -17,23 +17,40 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.tracker.trackDailyHub.database.AppDatabase
+import kotlinx.coroutines.launch
 
 @Composable
 fun AddCategoryDialog(
-    categoryName: String,
     onConfirmClick: () -> Unit,
     onCancelClick: () -> Unit,
     onTextFieldChange: (String) -> Unit,
+    db: AppDatabase,
 ) {
 
     var isError by remember {
         mutableStateOf(false)
     }
+
+    var categoryName by remember {
+        mutableStateOf("")
+    }
+
+    var errorText by remember {
+        mutableStateOf("")
+    }
+
+    var isNewCategoryUnique by remember {
+        mutableStateOf(true)
+    }
+
+    val coroutineScope = rememberCoroutineScope()
 
     Dialog(
         onDismissRequest = onCancelClick
@@ -52,6 +69,11 @@ fun AddCategoryDialog(
                 value = categoryName,
                 onValueChange = {
                     isError = it.isBlank()
+                    categoryName = it
+
+                    coroutineScope.launch {
+                    isNewCategoryUnique = db.categoryDao().getCategoryByName(categoryName) == null
+                    }
                     onTextFieldChange(it)
                 },
                 label = { Text(text = "Название категории") },
@@ -67,7 +89,7 @@ fun AddCategoryDialog(
                 supportingText = {
                     if (isError) {
                         Text(
-                            text = "Введите название",
+                            text = errorText,
                             color = MaterialTheme.colors.error,
                             style = MaterialTheme.typography.caption,
                             modifier = Modifier.padding(start = 8.dp)
@@ -94,9 +116,16 @@ fun AddCategoryDialog(
                 TextButton(
                     onClick = {
                         if (categoryName.isNotBlank()) {
-                            onConfirmClick()
+                            if (!isNewCategoryUnique) {
+                                isError = true
+                                errorText = "Категория с таким названием уже существует"
+                            } else {
+                                onConfirmClick()
+                            }
+
                         } else {
                             isError = true
+                            errorText = "Введите название"
                         }
                     },
                 ) {

@@ -169,12 +169,12 @@ fun TrackDailyHub(
 
         if (showDialog) {
             AddCategoryDialog(
-                categoryName = createdCategory,
                 onConfirmClick = {
                     val newTimer =
                         TimerData(category = createdCategory, timeInSeconds = currentTime)
                     coroutineScope.launch {
                         snackBarHostState.showSnackbar("30 мин было добавлено в ${createdCategory}")
+
                         db.categoryDao()
                             .insertUniqueCategory(Category(name = createdCategory))
                         db.timerDao().insertTimer(newTimer)
@@ -185,6 +185,7 @@ fun TrackDailyHub(
                 onTextFieldChange = {
                     createdCategory = it
                 },
+                db = db
             )
         }
     }
