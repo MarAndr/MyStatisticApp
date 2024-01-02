@@ -10,14 +10,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
-import androidx.compose.material.Divider
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,7 +36,8 @@ fun AddSurveyScreen(
     onCategoryCreated: (String) -> Unit,
     onCategorySelected: (String) -> Unit,
     onConfirmRequest: () -> Unit,
-    onCancelClick: () -> Unit
+    onCancelClick: () -> Unit,
+    onAddButtonClick: () -> Unit,
 ) {
 
     var createdCategory by remember {
@@ -53,20 +55,39 @@ fun AddSurveyScreen(
                 .padding(top = 24.dp)
         ) {
             Text(
-                text = "Выберите категорию или создайте новую:",
+                modifier = Modifier.fillMaxWidth(),
+                text = "Выберите категорию:",
                 style = MaterialTheme.typography.h1,
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            OutlinedTextField(
-                placeholder = { Text(text = "Название категории") },
-                modifier = Modifier.padding(bottom = 16.dp),
-                value = createdCategory,
-                onValueChange = {
-                    createdCategory = it
-                    onCategoryCreated(it)
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Box(
+                modifier = Modifier.padding(horizontal = 16.dp).clickable(onClick = onAddButtonClick)
+            ) {
+                Row(modifier = Modifier.padding(0.dp)) {
+                    Icon(
+                        imageVector = Icons.Default.AddCircle,
+                        contentDescription = null,
+                        tint = Color.Black,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text(text = "Cоздать новую", style = MaterialTheme.typography.h2)
                 }
-            )
+                Spacer(modifier = Modifier.height(32.dp))
+            }
+            
+//            OutlinedTextField(
+//                placeholder = { Text(text = "Название категории") },
+//                modifier = Modifier.padding(bottom = 16.dp),
+//                value = createdCategory,
+//                onValueChange = {
+//                    createdCategory = it
+//                    onCategoryCreated(it)
+//                }
+//            )
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -85,41 +106,38 @@ fun AddSurveyScreen(
                                     }
                                     .padding(16.dp)
                             )
-                            if (category != items.last()) {
-                                Divider(color = Color.Gray, thickness = 1.dp)
-                            }
                         }
                     }
                 }
             )
-            Spacer(modifier = Modifier.weight(0.15f))
+//            Spacer(modifier = Modifier.weight(0.15f))
         }
 
 
 
-        Row(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(16.dp)
-        ) {
-            Button(
-                modifier = Modifier
-                    .width(100.dp)
-                    .height(40.dp),
-                onClick = { onConfirmRequest() }
-            ) {
-                Text(text = "ОК")
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-            Button(
-                modifier = Modifier
-                    .width(100.dp)
-                    .height(40.dp),
-                onClick = { onCancelClick() }
-            ) {
-                Text(text = "Отмена")
-            }
-        }
+//        Row(
+//            modifier = Modifier
+//                .align(Alignment.BottomCenter)
+//                .padding(16.dp)
+//        ) {
+//            Button(
+//                modifier = Modifier
+//                    .width(100.dp)
+//                    .height(40.dp),
+//                onClick = { onConfirmRequest() }
+//            ) {
+//                Text(text = "ОК")
+//            }
+//            Spacer(modifier = Modifier.width(16.dp))
+//            Button(
+//                modifier = Modifier
+//                    .width(100.dp)
+//                    .height(40.dp),
+//                onClick = { onCancelClick() }
+//            ) {
+//                Text(text = "Отмена")
+//            }
+//        }
     }
 }
 

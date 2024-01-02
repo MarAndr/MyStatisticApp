@@ -34,6 +34,7 @@ import androidx.navigation.compose.rememberNavController
 import com.tracker.trackDailyHub.database.AppDatabase
 import com.tracker.trackDailyHub.database.Category
 import com.tracker.trackDailyHub.database.TimerData
+import com.tracker.trackDailyHub.ui.AddCategoryDialog
 import com.tracker.trackDailyHub.ui.AddSurveyScreen
 import com.tracker.trackDailyHub.ui.StatisticScreen
 import com.tracker.trackdailyhub.R
@@ -61,6 +62,7 @@ fun TrackDailyHub(
     val categories = categoriesFlow.collectAsState(initial = listOf()).value
     val categoriesNames: List<String> = categories.map { it.name }
     var showBottomBar by remember { mutableStateOf(true) }
+    var showDialog by remember { mutableStateOf(false) }
 
     val formattedTime = if (isRunning) {
         val hours = currentTime / 3600
@@ -145,28 +147,22 @@ fun TrackDailyHub(
                     onConfirmRequest = {
                         navController.popBackStack()
 
-                        if (createdCategory.isNotBlank()) {
-                            val newTimer =
-                                TimerData(category = createdCategory, timeInSeconds = currentTime)
-                            coroutineScope.launch {
-                                snackBarHostState.showSnackbar("Вы добавили новый замер в новую категорию: ${createdCategory}")
-                                db.categoryDao()
-                                    .insertUniqueCategory(Category(name = createdCategory))
-                                db.timerDao().insertTimer(newTimer)
-                            }
-                        } else if (selectedCategory.value.isNotEmpty()) {
+                        if (selectedCategory.value.isNotEmpty()) {
                             val newTimer = TimerData(
                                 category = selectedCategory.value,
                                 timeInSeconds = currentTime
                             )
                             coroutineScope.launch {
-                                snackBarHostState.showSnackbar("Вы добавили новый замер в категорию: ${selectedCategory.value}")
+                                snackBarHostState.showSnackbar("30 мин было добавлено в ${selectedCategory.value}")
                                 db.timerDao().insertTimer(newTimer)
                             }
                         }
                     },
                     onCancelClick = {
                         navController.popBackStack()
+                    },
+                    onAddButtonClick = {
+                        showDialog = true
                     }
                 )
             }
@@ -175,6 +171,26 @@ fun TrackDailyHub(
             }
         }
 
+        if (showDialog) {
+            AddCategoryDialog(
+                categoryName = createdCategory,
+                onConfirmClick = {
+                    val newTimer =
+                        TimerData(category = createdCategory, timeInSeconds = currentTime)
+                    coroutineScope.launch {
+                        snackBarHostState.showSnackbar("30 мин было добавлено в ${createdCategory}")
+                        db.categoryDao()
+                            .insertUniqueCategory(Category(name = createdCategory))
+                        db.timerDao().insertTimer(newTimer)
+                    }
+                    showDialog = false
+                },
+                onCancelClick = { showDialog = false },
+                onTextFieldChange = {
+                    createdCategory = it
+                }
+            )
+        }
     }
 }
 
