@@ -20,10 +20,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,17 +29,10 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AddSurveyScreen(
     items: List<String>,
-    onCategoryCreated: (String) -> Unit,
     onCategorySelected: (String) -> Unit,
     onConfirmRequest: () -> Unit,
-    onCancelClick: () -> Unit,
     onAddButtonClick: () -> Unit,
 ) {
-
-    var createdCategory by remember {
-        mutableStateOf("")
-    }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -63,7 +52,9 @@ fun AddSurveyScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             Box(
-                modifier = Modifier.padding(horizontal = 16.dp).clickable(onClick = onAddButtonClick)
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .clickable(onClick = onAddButtonClick)
             ) {
                 Row(modifier = Modifier.padding(0.dp)) {
                     Icon(
@@ -78,20 +69,11 @@ fun AddSurveyScreen(
                 }
                 Spacer(modifier = Modifier.height(32.dp))
             }
-            
-//            OutlinedTextField(
-//                placeholder = { Text(text = "Название категории") },
-//                modifier = Modifier.padding(bottom = 16.dp),
-//                value = createdCategory,
-//                onValueChange = {
-//                    createdCategory = it
-//                    onCategoryCreated(it)
-//                }
-//            )
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f), // Занимает все доступное пространство
+                    .weight(1f),
                 horizontalAlignment = Alignment.Start,
                 content = {
                     items(items) { category ->
@@ -110,34 +92,7 @@ fun AddSurveyScreen(
                     }
                 }
             )
-//            Spacer(modifier = Modifier.weight(0.15f))
         }
-
-
-
-//        Row(
-//            modifier = Modifier
-//                .align(Alignment.BottomCenter)
-//                .padding(16.dp)
-//        ) {
-//            Button(
-//                modifier = Modifier
-//                    .width(100.dp)
-//                    .height(40.dp),
-//                onClick = { onConfirmRequest() }
-//            ) {
-//                Text(text = "ОК")
-//            }
-//            Spacer(modifier = Modifier.width(16.dp))
-//            Button(
-//                modifier = Modifier
-//                    .width(100.dp)
-//                    .height(40.dp),
-//                onClick = { onCancelClick() }
-//            ) {
-//                Text(text = "Отмена")
-//            }
-//        }
     }
 }
 
