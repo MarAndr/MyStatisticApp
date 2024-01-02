@@ -188,7 +188,7 @@ fun TrackDailyHub(
                 onCancelClick = { showDialog = false },
                 onTextFieldChange = {
                     createdCategory = it
-                }
+                },
             )
         }
     }
