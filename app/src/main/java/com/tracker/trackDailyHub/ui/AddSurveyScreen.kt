@@ -15,11 +15,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.AppBarDefaults
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,16 +50,33 @@ fun AddSurveyScreen(
                 .align(Alignment.TopCenter)
                 .padding(top = 24.dp)
         ) {
+
+            // Toolbar with back arrow
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Выберите категорию:",
+                        style = MaterialTheme.typography.h1,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { /* Handle back button click here */ }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color.Black
+                        )
+                    }
+                },
+                backgroundColor = Color.White,
+                elevation = AppBarDefaults.TopAppBarElevation
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
             if (items.isNotEmpty()) {
-
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = "Выберите категорию:",
-                    style = MaterialTheme.typography.h1,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(32.dp))
-
                 Box(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
