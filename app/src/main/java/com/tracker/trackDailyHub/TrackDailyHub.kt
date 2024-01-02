@@ -140,7 +140,6 @@ fun TrackDailyHub(
                 showBottomBar = false
                 AddSurveyScreen(
                     items = categoriesNames,
-                    onCategoryCreated = { createdCategory = it },
                     onCategorySelected = {
                         selectedCategory.value = it
                     },
@@ -157,9 +156,6 @@ fun TrackDailyHub(
                                 db.timerDao().insertTimer(newTimer)
                             }
                         }
-                    },
-                    onCancelClick = {
-                        navController.popBackStack()
                     },
                     onAddButtonClick = {
                         showDialog = true

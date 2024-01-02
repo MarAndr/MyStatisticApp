@@ -2,6 +2,7 @@ package com.tracker.trackDailyHub.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,8 +24,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun AddSurveyScreen(
@@ -43,55 +46,88 @@ fun AddSurveyScreen(
                 .align(Alignment.TopCenter)
                 .padding(top = 24.dp)
         ) {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = "Выберите категорию:",
-                style = MaterialTheme.typography.h1,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(32.dp))
+            if (items.isNotEmpty()) {
 
-            Box(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .clickable(onClick = onAddButtonClick)
-            ) {
-                Row(modifier = Modifier.padding(0.dp)) {
-                    Icon(
-                        imageVector = Icons.Default.AddCircle,
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Text(text = "Cоздать новую", style = MaterialTheme.typography.h2)
-                }
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "Выберите категорию:",
+                    style = MaterialTheme.typography.h1,
+                    textAlign = TextAlign.Center
+                )
                 Spacer(modifier = Modifier.height(32.dp))
-            }
 
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                horizontalAlignment = Alignment.Start,
-                content = {
-                    items(items) { category ->
-                        Column {
-                            Text(
-                                style = MaterialTheme.typography.h2,
-                                text = category,
-                                modifier = Modifier
-                                    .clickable {
-                                        onCategorySelected(category)
-                                        onConfirmRequest()
-                                    }
-                                    .padding(16.dp)
-                            )
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .clickable(onClick = onAddButtonClick)
+                ) {
+                    Row(modifier = Modifier.padding(0.dp)) {
+                        Icon(
+                            imageVector = Icons.Default.AddCircle,
+                            contentDescription = null,
+                            tint = Color.Black,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Text(text = "Cоздать новую", style = MaterialTheme.typography.h2)
+                    }
+                    Spacer(modifier = Modifier.height(32.dp))
+                }
+
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    horizontalAlignment = Alignment.Start,
+                    content = {
+                        items(items) { category ->
+                            Column {
+                                Text(
+                                    style = MaterialTheme.typography.h2,
+                                    text = category,
+                                    modifier = Modifier
+                                        .clickable {
+                                            onCategorySelected(category)
+                                            onConfirmRequest()
+                                        }
+                                        .padding(16.dp)
+                                )
+                            }
                         }
                     }
+                )
+
+            } else {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Text(text = "Ваш список категорий пуст", style = TextStyle(color = Color.Gray, fontSize = 20.sp))
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .clickable(onClick = onAddButtonClick)
+                    ) {
+                        Row(modifier = Modifier.padding(0.dp)) {
+                            Icon(
+                                imageVector = Icons.Default.AddCircle,
+                                contentDescription = null,
+                                tint = Color.Black,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+
+                            Text(text = "Cоздать новую", style = MaterialTheme.typography.h2)
+                        }
+                        Spacer(modifier = Modifier.height(32.dp))
+                    }
                 }
-            )
+            }
+
         }
     }
 }
