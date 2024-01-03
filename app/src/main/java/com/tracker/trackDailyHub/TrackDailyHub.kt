@@ -159,6 +159,9 @@ fun TrackDailyHub(
                     },
                     onAddButtonClick = {
                         showDialog = true
+                    },
+                    onNavigateBack = {
+                        navController.navigateUp()
                     }
                 )
             }

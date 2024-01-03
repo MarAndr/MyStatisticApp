@@ -29,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -39,6 +38,7 @@ fun AddSurveyScreen(
     onCategorySelected: (String) -> Unit,
     onConfirmRequest: () -> Unit,
     onAddButtonClick: () -> Unit,
+    onNavigateBack: () -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -51,18 +51,16 @@ fun AddSurveyScreen(
                 .padding(top = 24.dp)
         ) {
 
-            // Toolbar with back arrow
             TopAppBar(
                 title = {
                     Text(
-                        text = "Выберите категорию:",
-                        style = MaterialTheme.typography.h1,
-                        textAlign = TextAlign.Center,
+                        text = "Categorize the measurement:",
+                        style = MaterialTheme.typography.h2,
                         modifier = Modifier.fillMaxWidth()
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* Handle back button click here */ }) {
+                    IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Back",
@@ -106,7 +104,7 @@ fun AddSurveyScreen(
                         items(items) { category ->
                             Column {
                                 Text(
-                                    style = MaterialTheme.typography.h2,
+                                    style = MaterialTheme.typography.body1,
                                     text = category,
                                     modifier = Modifier
                                         .clickable {
