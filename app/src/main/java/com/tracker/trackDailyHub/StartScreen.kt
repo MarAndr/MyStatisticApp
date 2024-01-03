@@ -11,7 +11,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.tracker.trackdailyhub.R
 
 @Composable
 fun StartScreen(
@@ -37,21 +39,21 @@ fun StartScreen(
             Button(
                 onClick = { onStartButtonClick() },
             ) {
-                Text(text = "Start", style = MaterialTheme.typography.h1)
+                Text(text = stringResource(id = R.string.startScreen_start_button), style = MaterialTheme.typography.h1)
             }
         } else {
             Row(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                androidx.compose.material.Button(
+                Button(
                     onClick = { onStopButtonClick() }
                 ) {
-                    androidx.compose.material.Text(text = "Stop", style = MaterialTheme.typography.h1)
+                    Text(text = stringResource(id = R.string.startScreen_stop_button), style = MaterialTheme.typography.h1)
                 }
 
-                androidx.compose.material.Button(onClick = { onPauseButtonClick() }) {
-                    androidx.compose.material.Text(text = "Pause", style = MaterialTheme.typography.h1)
+                Button(onClick = { onPauseButtonClick() }) {
+                    Text(text = stringResource(id = R.string.startScreen_pause_button), style = MaterialTheme.typography.h1)
                 }
             }
         }

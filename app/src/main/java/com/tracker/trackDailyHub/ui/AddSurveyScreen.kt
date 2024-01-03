@@ -28,12 +28,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tracker.trackdailyhub.R
 
 @Composable
-fun AddSurveyScreen(
+fun AddMeasurementScreen(
     items: List<String>,
     onCategorySelected: (String) -> Unit,
     onConfirmRequest: () -> Unit,
@@ -54,7 +56,7 @@ fun AddSurveyScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Categorize the measurement:",
+                        text = stringResource(id = R.string.addMeasurementScreen_title),
                         style = MaterialTheme.typography.h2,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -89,7 +91,7 @@ fun AddSurveyScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
 
-                        Text(text = "Cоздать новую", style = MaterialTheme.typography.h2)
+                        Text(text = stringResource(id = R.string.addMeasurementScreen_add_new_category), style = MaterialTheme.typography.h2)
                     }
                     Spacer(modifier = Modifier.height(32.dp))
                 }
@@ -124,7 +126,7 @@ fun AddSurveyScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
-                    Text(text = "Ваш список категорий пуст", style = TextStyle(color = Color.Gray, fontSize = 20.sp))
+                    Text(text = stringResource(id = R.string.addMeasurementScreen_empty_category_list), style = TextStyle(color = Color.Gray, fontSize = 20.sp))
                     Spacer(modifier = Modifier.height(16.dp))
                     Box(
                         modifier = Modifier
@@ -140,7 +142,7 @@ fun AddSurveyScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
 
-                            Text(text = "Cоздать новую", style = MaterialTheme.typography.h2)
+                            Text(text = stringResource(id = R.string.addMeasurementScreen_add_new_category), style = MaterialTheme.typography.h2)
                         }
                         Spacer(modifier = Modifier.height(32.dp))
                     }

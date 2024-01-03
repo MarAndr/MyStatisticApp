@@ -35,7 +35,7 @@ import com.tracker.trackDailyHub.database.AppDatabase
 import com.tracker.trackDailyHub.database.Category
 import com.tracker.trackDailyHub.database.TimerData
 import com.tracker.trackDailyHub.ui.AddCategoryDialog
-import com.tracker.trackDailyHub.ui.AddSurveyScreen
+import com.tracker.trackDailyHub.ui.AddMeasurementScreen
 import com.tracker.trackDailyHub.ui.StatisticScreen
 import com.tracker.trackdailyhub.R
 import kotlinx.coroutines.delay
@@ -138,7 +138,7 @@ fun TrackDailyHub(
             }
             composable(route = TrackDailyHubDestination.AddSurveyScreen.route) {
                 showBottomBar = false
-                AddSurveyScreen(
+                AddMeasurementScreen(
                     items = categoriesNames,
                     onCategorySelected = {
                         selectedCategory.value = it

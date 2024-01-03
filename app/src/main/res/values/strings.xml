@@ -2,4 +2,10 @@
     <string name="app_name">TrackDailyHub</string>
     <string name="start_screen">Start Screen</string>
     <string name="statistic_screen">Statistic Screen</string>
+    <string name="addMeasurementScreen_title">Categorize the measurement:</string>
+    <string name="addMeasurementScreen_add_new_category">Create new</string>
+    <string name="addMeasurementScreen_empty_category_list">Your list of categories is empty.</string>
+    <string name="startScreen_start_button">Start</string>
+    <string name="startScreen_pause_button">Pause</string>
+    <string name="startScreen_stop_button">Stop</string>
 </resources>
