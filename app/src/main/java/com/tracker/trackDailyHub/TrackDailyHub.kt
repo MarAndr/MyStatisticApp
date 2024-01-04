@@ -2,16 +2,12 @@ package com.tracker.trackDailyHub
 
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -22,14 +18,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.tracker.trackDailyHub.database.AppDatabase
 import com.tracker.trackDailyHub.database.Category
@@ -82,29 +74,29 @@ fun TrackDailyHub(
             )
         },
         bottomBar = {
-            if (showBottomBar) {
-                BottomNavigation {
-                    val navBackStackEntry by navController.currentBackStackEntryAsState()
-                    val currentDestination = navBackStackEntry?.destination
-
-                    items.forEach { screen ->
-                        BottomNavigationItem(
-                            icon = { Icon(screen.icon, contentDescription = null) },
-                            label = { Text(stringResource(screen.resourceId)) },
-                            selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-                            onClick = {
-                                navController.navigate(screen.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
-                        )
-                    }
-                }
-            }
+//            if (showBottomBar) {
+//                BottomNavigation {
+//                    val navBackStackEntry by navController.currentBackStackEntryAsState()
+//                    val currentDestination = navBackStackEntry?.destination
+//
+//                    items.forEach { screen ->
+//                        BottomNavigationItem(
+//                            icon = { Icon(screen.icon, contentDescription = null) },
+//                            label = { Text(stringResource(screen.resourceId)) },
+//                            selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+//                            onClick = {
+//                                navController.navigate(screen.route) {
+//                                    popUpTo(navController.graph.findStartDestination().id) {
+//                                        saveState = true
+//                                    }
+//                                    launchSingleTop = true
+//                                    restoreState = true
+//                                }
+//                            }
+//                        )
+//                    }
+//                }
+//            }
         }) { innerPadding ->
 
         NavHost(
@@ -133,6 +125,9 @@ fun TrackDailyHub(
                     },
                     onPauseButtonClick = {
                         isRunning = false
+                    },
+                    onStatisticClick = {
+                        navController.navigate(route = TrackDailyHubDestination.StatisticScreen.route)
                     }
                 )
             }
