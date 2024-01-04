@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.tracker.trackdailyhub"
-        minSdk 24
+        minSdk 26
         targetSdk 34
         versionCode 1
         versionName "1.0"
@@ -76,5 +76,7 @@ dependencies {
     //Dagger Hilt
     implementation ("com.google.dagger:hilt-android:2.50")
     kapt("com.google.dagger:hilt-compiler:2.50")
+
+    implementation 'co.yml:ycharts:2.1.0'
 
 }
