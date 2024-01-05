@@ -5,13 +5,18 @@
     <font
         app:fontStyle="normal"
         app:fontWeight="400"
-        app:font="@font/montserrat_regular" />
+        app:font="@font/roboto_regular" />
 
     <!-- Bold variant -->
     <font
         app:fontStyle="normal"
         app:fontWeight="700"
-        app:font="@font/montserrat_bold" />
+        app:font="@font/roboto_bold" />
+
+    <font
+        app:fontStyle="normal"
+        app:fontWeight="700"
+        app:font="@font/roboto_light" />
 
     <!-- Add more variants if needed -->
 
