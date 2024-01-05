@@ -41,7 +41,6 @@ fun TrackDailyHub(
     db: AppDatabase,
 ) {
 
-
     val snackBarHostState = remember {
         SnackbarHostState()
     }
@@ -82,7 +81,9 @@ fun TrackDailyHub(
                         coroutineScope.launch {
                             while (timerState == TimerState.RUNNING) {
                                 delay(1000)
-                                currentTime++
+                                if (timerState == TimerState.RUNNING) {
+                                    currentTime++
+                                }
                             }
                         }
                     },
@@ -101,7 +102,9 @@ fun TrackDailyHub(
                         coroutineScope.launch {
                             while (timerState == TimerState.RUNNING) {
                                 delay(1000)
-                                currentTime++
+                                if (timerState == TimerState.RUNNING) {
+                                    currentTime++
+                                }
                             }
                         }
                     }
@@ -135,9 +138,13 @@ fun TrackDailyHub(
                         timerState = TimerState.RUNNING
                         coroutineScope.launch {
                             snackBarHostState.showSnackbar("You did not specify a category for the measurement; the current measurement has not been saved.")
+                        }
+                        coroutineScope.launch {
                             while (timerState == TimerState.RUNNING) {
                                 delay(1000)
+                                if (timerState == TimerState.RUNNING){
                                 currentTime++
+                                }
                             }
                         }
 

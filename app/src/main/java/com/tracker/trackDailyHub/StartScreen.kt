@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -49,14 +48,7 @@ fun StartScreen(
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
 
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(1f),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
+        Spacer(modifier = Modifier.weight(1f))
             Text(
                 text = time,
                 style = MaterialTheme.typography.subtitle1,
@@ -70,7 +62,8 @@ fun StartScreen(
                 onResumeButtonClick = onResumeButtonClick,
                 onStopButtonClick = onStopButtonClick,
             )
-        }
+
+        Spacer(modifier = Modifier.weight(1f))
 
         NavigationCustomButtons(
             modifier = Modifier

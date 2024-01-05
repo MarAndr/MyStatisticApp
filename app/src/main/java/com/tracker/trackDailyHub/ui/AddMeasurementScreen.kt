@@ -50,7 +50,6 @@ fun AddMeasurementScreen(
         Column(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = 24.dp)
         ) {
 
             TopAppBar(
