@@ -36,7 +36,7 @@ import com.tracker.trackdailyhub.R
 @Composable
 fun StartScreen(
     time: String,
-    timerState: TimerSate,
+    timerState: TimerState,
     onStartButtonClick: () -> Unit,
     onStopButtonClick: () -> Unit,
     onPauseButtonClick: () -> Unit,
@@ -83,20 +83,20 @@ fun StartScreen(
 
 @Composable
 fun SetControlButtons(
-    timerState: TimerSate,
+    timerState: TimerState,
     onStartButtonClick: () -> Unit,
     onPauseButtonClick: () -> Unit,
     onStopButtonClick: () -> Unit,
     onResumeButtonClick: () -> Unit,
 ) {
     when (timerState) {
-        TimerSate.INITIAL -> {
+        TimerState.INITIAL -> {
             CustomButton(horizontalPadding = 32.dp, drawableId = R.drawable.solar_play_bold, isTextNeed = true) {
                 onStartButtonClick()
             }
         }
 
-        TimerSate.RUNNING -> {
+        TimerState.RUNNING -> {
             Row(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -112,7 +112,7 @@ fun SetControlButtons(
             }
         }
 
-        TimerSate.PAUSED -> {
+        TimerState.PAUSED -> {
             Row(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -127,8 +127,6 @@ fun SetControlButtons(
                 }
             }
         }
-
-        else -> {}
     }
 }
 

@@ -48,7 +48,7 @@ fun TrackDailyHub(
     val coroutineScope = rememberCoroutineScope()
     val selectedCategory = remember { mutableStateOf("") }
     var createdCategory by remember { mutableStateOf("") }
-    var timerState by remember { mutableStateOf<TimerSate>(TimerSate.INITIAL) }
+    var timerState by remember { mutableStateOf<TimerState>(TimerState.INITIAL) }
     var currentTime by remember { mutableLongStateOf(0L) }
     val categoriesFlow = db.categoryDao().getAllCategories()
     val categories = categoriesFlow.collectAsState(initial = listOf()).value
@@ -76,26 +76,34 @@ fun TrackDailyHub(
                     time = formatTime(currentTime),
                     timerState = timerState,
                     onStartButtonClick = {
-                        timerState = TimerSate.RUNNING
+                        timerState = TimerState.RUNNING
                         currentTime = 0L
                         coroutineScope.launch {
-                            while (timerState == TimerSate.RUNNING) {
+                            while (timerState == TimerState.RUNNING) {
                                 delay(1000)
                                 currentTime++
                             }
                         }
                     },
                     onStopButtonClick = {
-                        timerState = TimerSate.STOPPED
+                        timerState = TimerState.PAUSED
                         navController.navigate(TrackDailyHubDestination.AddSurveyScreen.route)
                     },
                     onPauseButtonClick = {
-                        timerState = TimerSate.PAUSED
+                        timerState = TimerState.PAUSED
                     },
                     onStatisticClick = {
                         navController.navigate(route = TrackDailyHubDestination.StatisticScreen.route)
                     },
-                    onResumeButtonClick = {}
+                    onResumeButtonClick = {
+                        timerState = TimerState.RUNNING
+                        coroutineScope.launch {
+                            while (timerState == TimerState.RUNNING) {
+                                delay(1000)
+                                currentTime++
+                            }
+                        }
+                    }
                 )
             }
             composable(route = TrackDailyHubDestination.AddSurveyScreen.route) {
