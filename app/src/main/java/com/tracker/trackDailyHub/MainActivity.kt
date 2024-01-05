@@ -10,8 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.room.Room
 import com.tracker.trackDailyHub.database.AppDatabase
 import com.tracker.trackDailyHub.ui.theme.MyStatisticAppTheme
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var db: AppDatabase
 
