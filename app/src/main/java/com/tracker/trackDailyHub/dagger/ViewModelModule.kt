@@ -1,6 +1,7 @@
 package com.tracker.trackDailyHub.dagger
 
 import com.tracker.trackDailyHub.ITrackRepository
+import com.tracker.trackDailyHub.TrackDailyViewModel
 import com.tracker.trackDailyHub.TrackRepositoryImpl
 import com.tracker.trackDailyHub.database.CategoryDao
 import com.tracker.trackDailyHub.database.TimerDao
@@ -21,5 +22,12 @@ object ViewModelModule {
         trackDao: TimerDao
     ): ITrackRepository {
         return TrackRepositoryImpl(categoryDao, trackDao)
+    }
+
+    @Provides
+    fun provideTrackDailyViewModel(
+        trackRepository: ITrackRepository
+    ): TrackDailyViewModel {
+        return TrackDailyViewModel(trackRepository)
     }
 }
