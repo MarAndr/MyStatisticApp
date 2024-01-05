@@ -18,6 +18,12 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -25,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.tracker.trackDailyHub.ui.NavigationCustomButtons
 import com.tracker.trackDailyHub.ui.theme.Gray100
 import com.tracker.trackDailyHub.ui.theme.Gray800
@@ -34,14 +41,22 @@ import com.tracker.trackdailyhub.R
 
 @Composable
 fun StartScreen(
-    time: String,
-    timerState: TimerState,
-    onStartButtonClick: () -> Unit,
-    onStopButtonClick: () -> Unit,
-    onPauseButtonClick: () -> Unit,
-    onResumeButtonClick: () -> Unit,
-    onStatisticClick: () -> Unit,
+    navController: NavHostController,
+    viewModel: StartScreenViewModel,
 ) {
+    var time by remember {
+        mutableLongStateOf(0L)
+    }
+
+    var timerState by remember { mutableStateOf<TimerState>(TimerState.INITIAL) }
+
+    LaunchedEffect(viewModel.startScreenState) {
+        viewModel.startScreenState.collect { state ->
+            time = state.time
+            timerState = state.timerState
+        }
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -49,30 +64,36 @@ fun StartScreen(
     ) {
 
         Spacer(modifier = Modifier.weight(1f))
-            Text(
-                text = time,
-                style = MaterialTheme.typography.subtitle1,
-                modifier = Modifier.padding(16.dp)
-            )
+        Text(
+            text = formatTime(time),
+            style = MaterialTheme.typography.subtitle1,
+            modifier = Modifier.padding(16.dp)
+        )
 
-            SetControlButtons(
-                timerState = timerState,
-                onStartButtonClick = onStartButtonClick,
-                onPauseButtonClick = onPauseButtonClick,
-                onResumeButtonClick = onResumeButtonClick,
-                onStopButtonClick = onStopButtonClick,
-            )
+        SetControlButtons(
+            timerState = timerState,
+            onStartButtonClick = { viewModel.startTimer() },
+            onPauseButtonClick = { viewModel.pauseTimer() },
+            onResumeButtonClick = { viewModel.startTimer() },
+            onStopButtonClick = {
+                viewModel.pauseTimer()
+                navController.navigate(TrackDailyHubDestination.AddSurveyScreen.route)
+            },
+        )
 
         Spacer(modifier = Modifier.weight(1f))
 
         NavigationCustomButtons(
             modifier = Modifier
                 .background(Gray100, shape = RoundedCornerShape(100)),
-            onStatisticClick = onStatisticClick,
+            onStatisticClick = {
+                navController.navigate(TrackDailyHubDestination.StatisticScreen.route)
+            },
         )
         Spacer(modifier = Modifier.height(32.dp))
     }
 }
+
 
 @Composable
 fun SetControlButtons(
@@ -84,7 +105,11 @@ fun SetControlButtons(
 ) {
     when (timerState) {
         TimerState.INITIAL -> {
-            CustomButton(horizontalPadding = 32.dp, drawableId = R.drawable.solar_play_bold, isTextNeed = true) {
+            CustomButton(
+                horizontalPadding = 38.dp,
+                drawableId = R.drawable.solar_play_bold,
+                isTextNeed = true
+            ) {
                 onStartButtonClick()
             }
         }
@@ -95,7 +120,11 @@ fun SetControlButtons(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
 
-                CustomButton(drawableId = R.drawable.ic_round_pause, backgroundColor = Color.White, contentColor = Gray800) {
+                CustomButton(
+                    drawableId = R.drawable.ic_round_pause,
+                    backgroundColor = Color.White,
+                    contentColor = Gray800
+                ) {
                     onPauseButtonClick()
                 }
 
@@ -152,6 +181,14 @@ fun CustomButton(
             Text(text = "Start", style = MaterialTheme.typography.button)
         }
     }
+}
+
+fun formatTime(currentTime: Long): String {
+    val hours = currentTime / 3600
+    val minutes = (currentTime % 3600) / 60
+    val seconds = currentTime % 60
+
+    return "%02d:%02d:%02d".format(hours, minutes, seconds)
 }
 
 

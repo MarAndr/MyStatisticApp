@@ -37,13 +37,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun TrackDailyHub(
     navController: NavHostController = rememberNavController(),
-    viewModel: TrackDailyViewModel = viewModel(),
     db: AppDatabase,
 ) {
 
     val snackBarHostState = remember {
         SnackbarHostState()
     }
+
+    val startScreenViewModel: StartScreenViewModel = viewModel()
 
     val coroutineScope = rememberCoroutineScope()
     val selectedCategory = remember { mutableStateOf("") }
@@ -73,41 +74,8 @@ fun TrackDailyHub(
             composable(route = TrackDailyHubDestination.StartScreen.route) {
                 showBottomBar = true
                 StartScreen(
-                    time = formatTime(currentTime),
-                    timerState = timerState,
-                    onStartButtonClick = {
-                        timerState = TimerState.RUNNING
-                        currentTime = 0L
-                        coroutineScope.launch {
-                            while (timerState == TimerState.RUNNING) {
-                                delay(1000)
-                                if (timerState == TimerState.RUNNING) {
-                                    currentTime++
-                                }
-                            }
-                        }
-                    },
-                    onStopButtonClick = {
-                        timerState = TimerState.PAUSED
-                        navController.navigate(TrackDailyHubDestination.AddSurveyScreen.route)
-                    },
-                    onPauseButtonClick = {
-                        timerState = TimerState.PAUSED
-                    },
-                    onStatisticClick = {
-                        navController.navigate(route = TrackDailyHubDestination.StatisticScreen.route)
-                    },
-                    onResumeButtonClick = {
-                        timerState = TimerState.RUNNING
-                        coroutineScope.launch {
-                            while (timerState == TimerState.RUNNING) {
-                                delay(1000)
-                                if (timerState == TimerState.RUNNING) {
-                                    currentTime++
-                                }
-                            }
-                        }
-                    }
+                    navController = navController,
+                    viewModel = startScreenViewModel,
                 )
             }
             composable(route = TrackDailyHubDestination.AddSurveyScreen.route) {
@@ -181,13 +149,13 @@ fun TrackDailyHub(
     }
 }
 
-fun formatTime(currentTime: Long): String {
-    val hours = currentTime / 3600
-    val minutes = (currentTime % 3600) / 60
-    val seconds = currentTime % 60
-
-    return "%02d:%02d:%02d".format(hours, minutes, seconds)
-}
+//fun formatTime(currentTime: Long): String {
+//    val hours = currentTime / 3600
+//    val minutes = (currentTime % 3600) / 60
+//    val seconds = currentTime % 60
+//
+//    return "%02d:%02d:%02d".format(hours, minutes, seconds)
+//}
 
 sealed class BottomNavItem(val route: String, val resourceId: Int, val icon: ImageVector) {
     object StartScreen : BottomNavItem(

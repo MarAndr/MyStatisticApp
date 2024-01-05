@@ -35,9 +35,9 @@ val Typography = Typography(
     ),
     subtitle1 = TextStyle(
         fontWeight = FontWeight.Light,
-        fontSize = 44.sp,
+        fontSize = 36.sp,
         lineHeight = 44.sp,
-        letterSpacing = 0.5.sp
+        letterSpacing = 0.1.sp
     ),
     button = TextStyle(
         fontWeight = FontWeight.Normal,
