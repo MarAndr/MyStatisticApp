@@ -91,7 +91,10 @@ fun AddMeasurementScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
 
-                        Text(text = stringResource(id = R.string.addMeasurementScreen_add_new_category), style = MaterialTheme.typography.h2)
+                        Text(
+                            text = stringResource(id = R.string.addMeasurementScreen_add_new_category),
+                            style = MaterialTheme.typography.h2
+                        )
                     }
                     Spacer(modifier = Modifier.height(32.dp))
                 }
@@ -126,7 +129,10 @@ fun AddMeasurementScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
-                    Text(text = stringResource(id = R.string.addMeasurementScreen_empty_category_list), style = TextStyle(color = Color.Gray, fontSize = 20.sp))
+                    Text(
+                        text = stringResource(id = R.string.addMeasurementScreen_empty_category_list),
+                        style = TextStyle(color = Color.Gray, fontSize = 20.sp)
+                    )
                     Spacer(modifier = Modifier.height(16.dp))
                     Box(
                         modifier = Modifier
@@ -142,7 +148,10 @@ fun AddMeasurementScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
 
-                            Text(text = stringResource(id = R.string.addMeasurementScreen_add_new_category), style = MaterialTheme.typography.h2)
+                            Text(
+                                text = stringResource(id = R.string.addMeasurementScreen_add_new_category),
+                                style = MaterialTheme.typography.h2
+                            )
                         }
                         Spacer(modifier = Modifier.height(32.dp))
                     }
@@ -150,6 +159,9 @@ fun AddMeasurementScreen(
             }
 
         }
+    }
+    BackButtonHandler {
+        onNavigateBack()
     }
 }
 
