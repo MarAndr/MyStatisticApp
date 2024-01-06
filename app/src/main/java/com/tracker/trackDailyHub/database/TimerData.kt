@@ -7,6 +7,6 @@ import androidx.room.PrimaryKey
 data class TimerData(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val category: String,
-    val timeInSeconds: Long
+    val category: Category,
+    val timeInSeconds: Long,
 )

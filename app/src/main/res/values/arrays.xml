@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="default_categories">
+        <item>Work</item>
+        <item>English</item>
+        <item>Sport</item>
+        <item>Movie</item>
+        <item>Friends &amp; Love</item>
+    </string-array>
+
+    <integer-array name="default_category_icons">
+        <item>@drawable/material_symbols_work</item>
+        <item>@drawable/material_symbols_eng</item>
+        <item>@drawable/material_symbols_sport</item>
+        <item>@drawable/material_symbols_movie</item>
+        <item>@drawable/material_symbols_friends</item>
+    </integer-array>
+
+</resources>

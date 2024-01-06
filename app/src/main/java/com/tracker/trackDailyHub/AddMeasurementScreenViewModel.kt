@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tracker.trackDailyHub.database.Category
 import com.tracker.trackDailyHub.database.TimerData
+import com.tracker.trackdailyhub.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,7 +31,7 @@ class AddMeasurementScreenViewModel @Inject constructor(
 
     fun addTrackWithNewCategory(categoryName: String, track: TimerData) {
         viewModelScope.launch {
-            trackRepository.insertCategory(Category(name = categoryName))
+            trackRepository.insertCategory(Category(name = categoryName, iconResourceId = R.drawable.ic_round_stop))
             trackRepository.insertTrack(track)
         }
     }
@@ -41,7 +42,7 @@ class AddMeasurementScreenViewModel @Inject constructor(
         }
     }
 
-    fun loadCategories() {
+    private fun loadCategories() {
         viewModelScope.launch {
             trackRepository.getCategories()
                 .collect { categories ->

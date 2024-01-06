@@ -37,8 +37,8 @@ fun StatisticScreen(db: AppDatabase) {
     val categoryToTotalTime = mutableMapOf<String, Long>()
 
     timersState.forEach { timerData ->
-        categoryToTotalTime[timerData.category] =
-            categoryToTotalTime.getOrDefault(timerData.category, 0) + timerData.timeInSeconds
+        categoryToTotalTime[timerData.category.name] =
+            categoryToTotalTime.getOrDefault(timerData.category.name, 0) + timerData.timeInSeconds
     }
 
     SectionList(sections = categoryToTotalTime)

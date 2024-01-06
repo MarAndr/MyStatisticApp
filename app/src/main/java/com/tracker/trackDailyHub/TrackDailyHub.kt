@@ -47,8 +47,8 @@ fun TrackDailyHub(
     val addMeasurementScreenViewModel: AddMeasurementScreenViewModel = viewModel()
 
     val coroutineScope = rememberCoroutineScope()
-    val selectedCategory = remember { mutableStateOf("") }
-    var createdCategory by remember { mutableStateOf("") }
+    val selectedCategory = remember { mutableStateOf(Category(name = "", iconResourceId = R.drawable.solar_play_bold)) }
+    var createdCategory by remember { mutableStateOf<Category>(Category(name = "", iconResourceId = R.drawable.solar_play_bold)) }
     var timerState by remember { mutableStateOf<TimerState>(TimerState.INITIAL) }
     var currentTime by remember { mutableLongStateOf(0L) }
 //    val categoriesFlow = db.categoryDao().getAllCategories()
@@ -83,12 +83,12 @@ fun TrackDailyHub(
                 AddMeasurementScreen(
                     viewModel = addMeasurementScreenViewModel,
                     onCategorySelected = {
-                        selectedCategory.value = it
+//                        selectedCategory.value = it
                     },
                     onConfirmRequest = {
                         navController.popBackStack()
 
-                        if (selectedCategory.value.isNotEmpty()) {
+                        if (selectedCategory.value.name.isNotEmpty()) {
                             val newTimer = TimerData(
                                 category = selectedCategory.value,
                                 timeInSeconds = currentTime
@@ -134,14 +134,14 @@ fun TrackDailyHub(
                         snackBarHostState.showSnackbar("30 мин было добавлено в $createdCategory")
 
                         db.categoryDao()
-                            .insertUniqueCategory(Category(name = createdCategory))
+                            .insertUniqueCategory(Category(name = createdCategory.name, iconResourceId = R.drawable.solar_play_bold))
                         db.timerDao().insertTimer(newTimer)
                     }
                     showDialog = false
                 },
                 onCancelClick = { showDialog = false },
                 onTextFieldChange = {
-                    createdCategory = it
+//                    createdCategory = it
                 },
                 db = db
             )
