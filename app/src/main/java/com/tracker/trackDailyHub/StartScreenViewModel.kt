@@ -2,8 +2,6 @@ package com.tracker.trackDailyHub
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tracker.trackDailyHub.database.Category
-import com.tracker.trackDailyHub.database.TimerData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,9 +11,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class StartScreenViewModel @Inject constructor(
-    private val trackRepository: ITrackRepository
-) : ViewModel() {
+class StartScreenViewModel @Inject constructor() : ViewModel() {
 
     private val _startScreenState = MutableStateFlow(StartScreenState(time = 0L, timerState = TimerState.INITIAL))
     val startScreenState: StateFlow<StartScreenState> = _startScreenState.asStateFlow()
@@ -38,18 +34,5 @@ class StartScreenViewModel @Inject constructor(
 
     fun pauseTimer(){
         _startScreenState.value = _startScreenState.value.copy(timerState = TimerState.PAUSED)
-    }
-
-    fun addTrackWithNewCategory(categoryName: String, track: TimerData) {
-        viewModelScope.launch {
-            trackRepository.insertCategory(Category(name = categoryName))
-            trackRepository.insertTrack(track)
-        }
-    }
-
-    fun addTrackWithExistedCategory(track: TimerData) {
-        viewModelScope.launch {
-            trackRepository.insertTrack(track)
-        }
     }
 }

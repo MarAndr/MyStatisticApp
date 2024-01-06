@@ -25,6 +25,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,16 +37,28 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tracker.trackDailyHub.AddMeasurementScreenViewModel
 import com.tracker.trackdailyhub.R
 
 @Composable
 fun AddMeasurementScreen(
-    items: List<String>,
+    viewModel: AddMeasurementScreenViewModel,
     onCategorySelected: (String) -> Unit,
     onConfirmRequest: () -> Unit,
     onAddButtonClick: () -> Unit,
     onNavigateBack: () -> Unit,
 ) {
+
+    var categories by remember {
+        mutableStateOf<List<String>>(emptyList())
+    }
+
+    LaunchedEffect(viewModel.addMeasurementScreenState) {
+        viewModel.addMeasurementScreenState.collect { state ->
+            categories = state.categoriesNames
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -75,7 +92,7 @@ fun AddMeasurementScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            if (items.isNotEmpty()) {
+            if (categories.isNotEmpty()) {
                 Box(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
@@ -105,7 +122,7 @@ fun AddMeasurementScreen(
                         .weight(1f),
                     horizontalAlignment = Alignment.Start,
                     content = {
-                        items(items) { category ->
+                        items(categories) { category ->
                             Column {
                                 Text(
                                     style = MaterialTheme.typography.body1,
