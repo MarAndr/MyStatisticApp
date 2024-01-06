@@ -116,7 +116,7 @@ fun SetControlButtons(
 
         TimerState.RUNNING -> {
             Row(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                modifier = Modifier.padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
 
@@ -136,7 +136,7 @@ fun SetControlButtons(
 
         TimerState.PAUSED -> {
             Row(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                modifier = Modifier.padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
 
