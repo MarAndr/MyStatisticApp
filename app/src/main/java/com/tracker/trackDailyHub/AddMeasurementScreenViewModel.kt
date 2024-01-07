@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,14 +21,22 @@ class AddMeasurementScreenViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             loadCategories()
+            if (!categoriesExistInDatabase()){
+                trackRepository.insertDefaultCategories()
+            }
         }
     }
 
     private val _addMeasurementScreenState = MutableStateFlow(
-        AddMeasurementScreenState(categoriesNames = listOf(), tracks = listOf())
+        AddMeasurementScreenState(categories = listOf(), tracks = listOf())
     )
     val addMeasurementScreenState: StateFlow<AddMeasurementScreenState> = _addMeasurementScreenState.asStateFlow()
     private val currentState = _addMeasurementScreenState.value
+
+    private suspend fun categoriesExistInDatabase(): Boolean {
+        val existingCategories = trackRepository.getCategories().firstOrNull()
+        return !existingCategories.isNullOrEmpty()
+    }
 
     fun addTrackWithNewCategory(categoryName: String, track: TimerData) {
         viewModelScope.launch {
@@ -46,8 +55,7 @@ class AddMeasurementScreenViewModel @Inject constructor(
         viewModelScope.launch {
             trackRepository.getCategories()
                 .collect { categories ->
-                    val categoriesNames = categories.map { it.name }
-                    _addMeasurementScreenState.value = currentState.copy(categoriesNames = categoriesNames)
+                    _addMeasurementScreenState.value = currentState.copy(categories = categories)
                 }
         }
     }

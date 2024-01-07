@@ -82,23 +82,23 @@ fun TrackDailyHub(
                 showBottomBar = false
                 AddMeasurementScreen(
                     viewModel = addMeasurementScreenViewModel,
-                    onCategorySelected = {
+//                    onCategorySelected = {
 //                        selectedCategory.value = it
-                    },
-                    onConfirmRequest = {
-                        navController.popBackStack()
-
-                        if (selectedCategory.value.name.isNotEmpty()) {
-                            val newTimer = TimerData(
-                                category = selectedCategory.value,
-                                timeInSeconds = currentTime
-                            )
-                            coroutineScope.launch {
-                                snackBarHostState.showSnackbar("30 мин было добавлено в ${selectedCategory.value}")
-                                db.timerDao().insertTimer(newTimer)
-                            }
-                        }
-                    },
+//                    },
+//                    onConfirmRequest = {
+//                        navController.popBackStack()
+//
+//                        if (selectedCategory.value.name.isNotEmpty()) {
+//                            val newTimer = TimerData(
+//                                category = selectedCategory.value,
+//                                timeInSeconds = currentTime
+//                            )
+//                            coroutineScope.launch {
+//                                snackBarHostState.showSnackbar("30 мин было добавлено в ${selectedCategory.value}")
+//                                db.timerDao().insertTimer(newTimer)
+//                            }
+//                        }
+//                    },
                     onAddButtonClick = {
                         showDialog = true
                     },
