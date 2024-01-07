@@ -21,6 +21,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -31,6 +32,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,26 +41,58 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.tracker.trackDailyHub.AddMeasurementScreenViewModel
 import com.tracker.trackDailyHub.database.Category
+import com.tracker.trackDailyHub.database.TimerData
 import com.tracker.trackDailyHub.ui.theme.Gray100
 import com.tracker.trackDailyHub.ui.theme.Green800
 import com.tracker.trackdailyhub.R
+import kotlinx.coroutines.launch
 
 @Composable
 fun AddMeasurementScreen(
+    navController: NavHostController,
+    snackbarHostState: SnackbarHostState,
     viewModel: AddMeasurementScreenViewModel,
     onAddButtonClick: () -> Unit,
     onNavigateBack: () -> Unit,
 ) {
 
+    //                    onCategorySelected = {
+//                        selectedCategory.value = it
+//                    },
+//                    onConfirmRequest = {
+//                        navController.popBackStack()
+//
+//                        if (selectedCategory.value.name.isNotEmpty()) {
+//                            val newTimer = TimerData(
+//                                category = selectedCategory.value,
+//                                timeInSeconds = currentTime
+//                            )
+//                            coroutineScope.launch {
+//                                snackBarHostState.showSnackbar("30 мин было добавлено в ${selectedCategory.value}")
+//                                db.timerDao().insertTimer(newTimer)
+//                            }
+//                        }
+//                    },
+
     var categories by remember {
         mutableStateOf<List<Category>>(emptyList())
     }
 
+    val coroutineScope = rememberCoroutineScope()
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+
+    val timeArg = navBackStackEntry?.arguments?.getLong("time") ?: 0L
+
     var selectedCategory by remember {
         mutableStateOf(Category(name = "", iconResourceId = R.drawable.solar_play_bold))
     }
+
+
 
     LaunchedEffect(viewModel.addMeasurementScreenState) {
         viewModel.addMeasurementScreenState.collect { state ->
@@ -117,7 +151,15 @@ fun AddMeasurementScreen(
             ),
             shape = RoundedCornerShape(16.dp),
             onClick = {
-//                viewModel.addTrackWithExistedCategory()
+
+                coroutineScope.launch {
+                    viewModel.addTrackWithExistedCategory(
+                        track = TimerData(category = selectedCategory, timeInSeconds = timeArg)
+                    )
+                    snackbarHostState.showSnackbar("$timeArg мин было добавлено в ${selectedCategory.name}")
+                }
+
+                navController.popBackStack()
             },
             enabled = selectedCategory.name.isNotEmpty(),
             modifier = Modifier

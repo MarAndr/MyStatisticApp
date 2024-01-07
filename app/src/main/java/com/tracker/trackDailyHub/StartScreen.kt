@@ -77,7 +77,7 @@ fun StartScreen(
             onResumeButtonClick = { viewModel.startTimer() },
             onStopButtonClick = {
                 viewModel.pauseTimer()
-                navController.navigate(TrackDailyHubDestination.AddSurveyScreen.route)
+                navController.navigate(TrackDailyHubDestination.AddSurveyScreen.withArgs(time))
             },
         )
 

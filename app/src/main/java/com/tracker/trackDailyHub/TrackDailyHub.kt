@@ -20,9 +20,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.tracker.trackDailyHub.database.AppDatabase
 import com.tracker.trackDailyHub.database.Category
 import com.tracker.trackDailyHub.database.TimerData
@@ -47,13 +49,16 @@ fun TrackDailyHub(
     val addMeasurementScreenViewModel: AddMeasurementScreenViewModel = viewModel()
 
     val coroutineScope = rememberCoroutineScope()
-    val selectedCategory = remember { mutableStateOf(Category(name = "", iconResourceId = R.drawable.solar_play_bold)) }
-    var createdCategory by remember { mutableStateOf<Category>(Category(name = "", iconResourceId = R.drawable.solar_play_bold)) }
+    val createdCategory by remember {
+        mutableStateOf<Category>(
+            Category(
+                name = "",
+                iconResourceId = R.drawable.solar_play_bold
+            )
+        )
+    }
     var timerState by remember { mutableStateOf<TimerState>(TimerState.INITIAL) }
     var currentTime by remember { mutableLongStateOf(0L) }
-//    val categoriesFlow = db.categoryDao().getAllCategories()
-//    val categories = categoriesFlow.collectAsState(initial = listOf()).value
-//    val categoriesNames: List<String> = categories.map { it.name }
     var showBottomBar by remember { mutableStateOf(true) }
     var showDialog by remember { mutableStateOf(false) }
 
@@ -78,27 +83,21 @@ fun TrackDailyHub(
                     viewModel = startScreenViewModel,
                 )
             }
-            composable(route = TrackDailyHubDestination.AddSurveyScreen.route) {
+            composable(
+                route = TrackDailyHubDestination.AddSurveyScreen.route + "/{time}",
+                arguments = listOf(
+                    navArgument("time") {
+                        type = NavType.LongType
+                        defaultValue = 0L
+                        nullable = false
+                    }
+                )
+            ) {
                 showBottomBar = false
                 AddMeasurementScreen(
+                    navController = navController,
                     viewModel = addMeasurementScreenViewModel,
-//                    onCategorySelected = {
-//                        selectedCategory.value = it
-//                    },
-//                    onConfirmRequest = {
-//                        navController.popBackStack()
-//
-//                        if (selectedCategory.value.name.isNotEmpty()) {
-//                            val newTimer = TimerData(
-//                                category = selectedCategory.value,
-//                                timeInSeconds = currentTime
-//                            )
-//                            coroutineScope.launch {
-//                                snackBarHostState.showSnackbar("30 мин было добавлено в ${selectedCategory.value}")
-//                                db.timerDao().insertTimer(newTimer)
-//                            }
-//                        }
-//                    },
+                    snackbarHostState = snackBarHostState,
                     onAddButtonClick = {
                         showDialog = true
                     },
@@ -110,8 +109,8 @@ fun TrackDailyHub(
                         coroutineScope.launch {
                             while (timerState == TimerState.RUNNING) {
                                 delay(1000)
-                                if (timerState == TimerState.RUNNING){
-                                currentTime++
+                                if (timerState == TimerState.RUNNING) {
+                                    currentTime++
                                 }
                             }
                         }
@@ -134,7 +133,12 @@ fun TrackDailyHub(
                         snackBarHostState.showSnackbar("30 мин было добавлено в $createdCategory")
 
                         db.categoryDao()
-                            .insertUniqueCategory(Category(name = createdCategory.name, iconResourceId = R.drawable.solar_play_bold))
+                            .insertUniqueCategory(
+                                Category(
+                                    name = createdCategory.name,
+                                    iconResourceId = R.drawable.solar_play_bold
+                                )
+                            )
                         db.timerDao().insertTimer(newTimer)
                     }
                     showDialog = false
