@@ -32,6 +32,10 @@ class StartScreenViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    fun dropTimer(){
+        _startScreenState.value = _startScreenState.value.copy(time = 0L, timerState = TimerState.INITIAL)
+    }
+
     fun pauseTimer(){
         _startScreenState.value = _startScreenState.value.copy(timerState = TimerState.PAUSED)
     }

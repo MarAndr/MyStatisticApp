@@ -50,7 +50,7 @@ fun TrackDailyHub(
 
     val coroutineScope = rememberCoroutineScope()
     val createdCategory by remember {
-        mutableStateOf<Category>(
+        mutableStateOf(
             Category(
                 name = "",
                 iconResourceId = R.drawable.solar_play_bold
@@ -98,6 +98,7 @@ fun TrackDailyHub(
                     navController = navController,
                     viewModel = addMeasurementScreenViewModel,
                     snackbarHostState = snackBarHostState,
+                    onSaveClick = { startScreenViewModel.dropTimer() },
                     onAddButtonClick = {
                         showDialog = true
                     },

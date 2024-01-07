@@ -56,27 +56,10 @@ fun AddMeasurementScreen(
     navController: NavHostController,
     snackbarHostState: SnackbarHostState,
     viewModel: AddMeasurementScreenViewModel,
+    onSaveClick: () -> Unit,
     onAddButtonClick: () -> Unit,
     onNavigateBack: () -> Unit,
 ) {
-
-    //                    onCategorySelected = {
-//                        selectedCategory.value = it
-//                    },
-//                    onConfirmRequest = {
-//                        navController.popBackStack()
-//
-//                        if (selectedCategory.value.name.isNotEmpty()) {
-//                            val newTimer = TimerData(
-//                                category = selectedCategory.value,
-//                                timeInSeconds = currentTime
-//                            )
-//                            coroutineScope.launch {
-//                                snackBarHostState.showSnackbar("30 мин было добавлено в ${selectedCategory.value}")
-//                                db.timerDao().insertTimer(newTimer)
-//                            }
-//                        }
-//                    },
 
     var categories by remember {
         mutableStateOf<List<Category>>(emptyList())
@@ -91,8 +74,6 @@ fun AddMeasurementScreen(
     var selectedCategory by remember {
         mutableStateOf(Category(name = "", iconResourceId = R.drawable.solar_play_bold))
     }
-
-
 
     LaunchedEffect(viewModel.addMeasurementScreenState) {
         viewModel.addMeasurementScreenState.collect { state ->
@@ -151,14 +132,13 @@ fun AddMeasurementScreen(
             ),
             shape = RoundedCornerShape(16.dp),
             onClick = {
-
+                onSaveClick()
                 coroutineScope.launch {
                     viewModel.addTrackWithExistedCategory(
                         track = TimerData(category = selectedCategory, timeInSeconds = timeArg)
                     )
-                    snackbarHostState.showSnackbar("$timeArg мин было добавлено в ${selectedCategory.name}")
+                    snackbarHostState.showSnackbar("$timeArg было добавлено в ${selectedCategory.name}")
                 }
-
                 navController.popBackStack()
             },
             enabled = selectedCategory.name.isNotEmpty(),
