@@ -1,11 +1,18 @@
 package com.tracker.trackDailyHub.ui
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -32,6 +39,7 @@ import com.tracker.trackDailyHub.AddNewCategoryViewModel
 import com.tracker.trackDailyHub.ui.theme.Green800
 import com.tracker.trackdailyhub.R
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 @Composable
 fun AddNewCategoryScreen(
@@ -59,7 +67,18 @@ fun AddNewCategoryScreen(
         mutableStateOf("")
     }
 
+    var isColorClicked by remember {
+        mutableStateOf(false)
+    }
+
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(viewModel.newCategoryData){
+        viewModel.newCategoryData.collect{
+            chosenCategoryColor = it.color?: Color.Unspecified
+            chosenCategoryIcon = it.icon?:R.drawable.ic_choose_icon
+        }
+    }
 
     LaunchedEffect(viewModel.errorState) {
         viewModel.errorState.collect { errorState ->
@@ -111,12 +130,15 @@ fun AddNewCategoryScreen(
             Icon(
                 modifier = Modifier.padding(end = 12.dp),
                 painter = painterResource(id = R.drawable.ic_choose_icon),
-                tint= Color.Unspecified,
+                tint = Color.Unspecified,
                 contentDescription = ""
             )
             Icon(
+                modifier = Modifier.clickable {
+                    isColorClicked = !isColorClicked
+                },
                 painter = painterResource(id = R.drawable.choose_color),
-                tint= Color.Unspecified,
+                tint = chosenCategoryColor,
                 contentDescription = ""
             )
             Spacer(modifier = Modifier.weight(1f))
@@ -135,7 +157,9 @@ fun AddNewCategoryScreen(
                 Text(text = "Save")
             }
         }
-        Spacer(modifier = Modifier.height(50.dp))
+        if (isColorClicked){
+            ColorGrid(viewModel)
+        }
     }
 }
 
@@ -168,4 +192,60 @@ enum class CategoryError(val supportText: String) {
     NOT_UNIQUE_CATEGORY("The category is not unique"),
     COLOR_NOT_CHOSEN("The color is not chosen"),
     ICON_NOT_CHOSEN("The icon is not chosen"),
+}
+
+@Composable
+fun ColorGrid(viewModel: AddNewCategoryViewModel) {
+    val colors = generateRandomColors(6)
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        itemsIndexed(colors) { rowIndex, colorRow ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                colorRow.forEach { color ->
+                    ColoredSquare(color = color, viewModel = viewModel)
+                }
+            }
+        }
+    }
+}
+
+fun generateRandomColors(totalCount: Int): List<List<Color>> {
+    val colors = mutableListOf<List<Color>>()
+    repeat(totalCount) {
+        val rowColors = List(6) { getRandomColor() }
+        colors.add(rowColors)
+    }
+    return colors
+}
+
+fun getRandomColor(): Color {
+    return Color(
+        red = Random.nextFloat(),
+        green = Random.nextFloat(),
+        blue = Random.nextFloat()
+    )
+}
+
+@Composable
+fun ColoredSquare(color: Color, viewModel: AddNewCategoryViewModel) {
+    Box(
+        modifier = Modifier
+            .clickable {
+                viewModel.setCategoryColor(color)
+            }
+            .size(36.dp)
+            .padding(4.dp)
+            .background(color),
+    ) {
+        // Content of the square, if any
+    }
 }

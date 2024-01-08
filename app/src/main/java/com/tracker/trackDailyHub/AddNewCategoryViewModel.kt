@@ -16,7 +16,7 @@ class AddNewCategoryViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _newCategoryData = MutableStateFlow(NewCategoryData())
-//    val newCategoryData: StateFlow<NewCategoryData> = _newCategoryData
+    val newCategoryData: StateFlow<NewCategoryData> = _newCategoryData
 
     private val _errorState = MutableStateFlow(AddNewCategoryValidationState())
     val errorState: StateFlow<AddNewCategoryValidationState> = _errorState
