@@ -1,6 +1,7 @@
 package com.tracker.trackDailyHub
 
 import androidx.compose.ui.graphics.Color
+import com.tracker.trackdailyhub.R
 
 
 val popularColors = listOf(
@@ -84,5 +85,18 @@ val popularColors6 = listOf(
     Color(0xFFADD8E6), // LightBlue
     Color(0xFFB0E0E6), // PowderBlue
     Color(0xFFAFEEEE),
+)
+
+val categoriesIcons = listOf(
+    R.drawable.dog,
+    R.drawable.fa_solid_guitar,
+    R.drawable.ic_round_shopping_cart,
+    R.drawable.ion_book,
+    R.drawable.material_symbols_directions_walk_rounded,
+    R.drawable.material_symbols_oven_rounded,
+    R.drawable.mdi_meat,
+    R.drawable.mingcute_bike_fill,
+    R.drawable.mingcute_flower_4_fill,
+    R.drawable.road,
 )
 

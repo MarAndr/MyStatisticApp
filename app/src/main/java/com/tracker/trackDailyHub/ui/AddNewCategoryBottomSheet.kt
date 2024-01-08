@@ -1,5 +1,6 @@
 package com.tracker.trackDailyHub.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.tracker.trackDailyHub.AddNewCategoryValidationState
 import com.tracker.trackDailyHub.AddNewCategoryViewModel
+import com.tracker.trackDailyHub.categoriesIcons
 import com.tracker.trackDailyHub.popularColors1
 import com.tracker.trackDailyHub.popularColors2
 import com.tracker.trackDailyHub.popularColors3
@@ -46,7 +48,6 @@ import com.tracker.trackDailyHub.popularColors6
 import com.tracker.trackDailyHub.ui.theme.Green800
 import com.tracker.trackdailyhub.R
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 @Composable
 fun AddNewCategoryScreen(
@@ -59,7 +60,7 @@ fun AddNewCategoryScreen(
     }
 
     var chosenCategoryIcon by remember {
-        mutableIntStateOf(0)
+        mutableIntStateOf(R.drawable.ic_choose_icon)
     }
 
     var chosenCategoryColor by remember {
@@ -78,12 +79,16 @@ fun AddNewCategoryScreen(
         mutableStateOf(false)
     }
 
+    var isIconClicked by remember {
+        mutableStateOf(false)
+    }
+
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(viewModel.newCategoryData){
-        viewModel.newCategoryData.collect{
-            chosenCategoryColor = it.color?: Color.Unspecified
-            chosenCategoryIcon = it.icon?:R.drawable.ic_choose_icon
+    LaunchedEffect(viewModel.newCategoryData) {
+        viewModel.newCategoryData.collect {
+            chosenCategoryColor = it.color ?: Color.Unspecified
+            chosenCategoryIcon = it.icon ?: R.drawable.ic_choose_icon
         }
     }
 
@@ -135,15 +140,22 @@ fun AddNewCategoryScreen(
         )
         Row(modifier = Modifier.padding(20.dp)) {
             Icon(
-                modifier = Modifier.padding(end = 12.dp).border(1.dp, color = Color.LightGray),
-                painter = painterResource(id = R.drawable.ic_choose_icon),
+                modifier = Modifier
+                    .padding(end = 12.dp)
+                    .border(1.dp, color = Color.LightGray)
+                    .clickable {
+                        isIconClicked = !isIconClicked
+                    },
+                painter = painterResource(id = chosenCategoryIcon),
                 tint = Color.Unspecified,
                 contentDescription = ""
             )
             Icon(
-                modifier = Modifier.border(1.dp, color = Color.LightGray).clickable {
-                    isColorClicked = !isColorClicked
-                },
+                modifier = Modifier
+                    .border(1.dp, color = Color.LightGray)
+                    .clickable {
+                        isColorClicked = !isColorClicked
+                    },
                 painter = painterResource(id = R.drawable.choose_color),
                 tint = chosenCategoryColor,
                 contentDescription = ""
@@ -164,8 +176,12 @@ fun AddNewCategoryScreen(
                 Text(text = "Save")
             }
         }
-        if (isColorClicked){
+        if (isColorClicked) {
             ColorGrid(viewModel)
+        }
+
+        if (isIconClicked){
+            IconGrid(viewModel)
         }
     }
 }
@@ -203,7 +219,7 @@ enum class CategoryError(val supportText: String) {
 
 @Composable
 fun ColorGrid(viewModel: AddNewCategoryViewModel) {
-    val colors = generateRandomColors(6)
+    val colors = getColors()
 
     LazyColumn(
         modifier = Modifier
@@ -225,28 +241,49 @@ fun ColorGrid(viewModel: AddNewCategoryViewModel) {
     }
 }
 
-fun generateRandomColors(totalCount: Int): List<List<Color>> {
+@Composable
+fun IconGrid(viewModel: AddNewCategoryViewModel) {
+    val icons = getIcons()
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        itemsIndexed(icons) { rowIndex, colorRow ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                colorRow.forEach { icon ->
+                    IconsSquare(icon = icon, viewModel = viewModel)
+                }
+            }
+        }
+    }
+}
+
+fun getColors(): List<List<Color>> {
     val colors = mutableListOf<List<Color>>()
-    colors.add(popularColors1)
-    colors.add(popularColors2)
-    colors.add(popularColors3)
-    colors.add(popularColors4)
-    colors.add(popularColors5)
-    colors.add(popularColors6)
-//    repeat(totalCount) {
-//        val rowColors = List(6) { getRandomColor() }
-//        val rowColors = popularColors
-//        colors.add(rowColors)
-//    }
+    colors.addAll(
+        listOf(
+            popularColors1,
+            popularColors2,
+            popularColors3,
+            popularColors4,
+            popularColors5,
+            popularColors6
+        )
+    )
     return colors
 }
 
-fun getRandomColor(): Color {
-    return Color(
-        red = Random.nextFloat(),
-        green = Random.nextFloat(),
-        blue = Random.nextFloat()
-    )
+fun getIcons(): List<List<Int>> {
+    val icons = mutableListOf<List<Int>>()
+    icons.add(categoriesIcons)
+    return icons
 }
 
 @Composable
@@ -262,5 +299,20 @@ fun ColoredSquare(color: Color, viewModel: AddNewCategoryViewModel) {
             .background(color),
     ) {
         // Content of the square, if any
+    }
+}
+
+@Composable
+fun IconsSquare(icon: Int, viewModel: AddNewCategoryViewModel) {
+    Box(
+        modifier = Modifier
+            .clickable {
+                viewModel.setCategoryIcon(icon)
+            }
+            .border(1.dp, color = Color.LightGray)
+            .size(36.dp)
+            .padding(4.dp),
+    ) {
+        Image(painter = painterResource(id = icon), contentDescription = "")
     }
 }
