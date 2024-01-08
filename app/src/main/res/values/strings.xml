@@ -3,6 +3,7 @@
     <string name="start_screen">Time</string>
     <string name="statistic_screen">Statistics</string>
     <string name="addMeasurementScreen_title">Categorize the measurement:</string>
+    <string name="statistics_screen_title">Statistics</string>
     <string name="addMeasurementScreen_add_new_category">Create new</string>
     <string name="addMeasurementScreen_empty_category_list">Your list of categories is empty.</string>
     <string name="startScreen_start_button">Start</string>

@@ -47,6 +47,7 @@ fun TrackDailyHub(
     val startScreenViewModel: StartScreenViewModel = viewModel()
     val addMeasurementScreenViewModel: AddMeasurementScreenViewModel = viewModel()
     val addNewCategoryViewModel: AddNewCategoryViewModel = viewModel()
+    val statisticViewModel: StatisticViewModel = viewModel()
 
     val coroutineScope = rememberCoroutineScope()
     val createdCategory by remember {
@@ -124,7 +125,11 @@ fun TrackDailyHub(
                 )
             }
             composable(route = TrackDailyHubDestination.StatisticScreen.route) {
-                StatisticScreen(db = db)
+                StatisticScreen(
+                    viewModel = statisticViewModel,
+                    navController = navController,
+                    db = db
+                )
             }
         }
 
