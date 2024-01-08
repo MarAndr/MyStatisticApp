@@ -1,6 +1,7 @@
 package com.tracker.trackDailyHub.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,6 +37,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.tracker.trackDailyHub.AddNewCategoryValidationState
 import com.tracker.trackDailyHub.AddNewCategoryViewModel
+import com.tracker.trackDailyHub.popularColors1
+import com.tracker.trackDailyHub.popularColors2
+import com.tracker.trackDailyHub.popularColors3
+import com.tracker.trackDailyHub.popularColors4
+import com.tracker.trackDailyHub.popularColors5
+import com.tracker.trackDailyHub.popularColors6
 import com.tracker.trackDailyHub.ui.theme.Green800
 import com.tracker.trackdailyhub.R
 import kotlinx.coroutines.launch
@@ -128,13 +135,13 @@ fun AddNewCategoryScreen(
         )
         Row(modifier = Modifier.padding(20.dp)) {
             Icon(
-                modifier = Modifier.padding(end = 12.dp),
+                modifier = Modifier.padding(end = 12.dp).border(1.dp, color = Color.LightGray),
                 painter = painterResource(id = R.drawable.ic_choose_icon),
                 tint = Color.Unspecified,
                 contentDescription = ""
             )
             Icon(
-                modifier = Modifier.clickable {
+                modifier = Modifier.border(1.dp, color = Color.LightGray).clickable {
                     isColorClicked = !isColorClicked
                 },
                 painter = painterResource(id = R.drawable.choose_color),
@@ -220,10 +227,17 @@ fun ColorGrid(viewModel: AddNewCategoryViewModel) {
 
 fun generateRandomColors(totalCount: Int): List<List<Color>> {
     val colors = mutableListOf<List<Color>>()
-    repeat(totalCount) {
-        val rowColors = List(6) { getRandomColor() }
-        colors.add(rowColors)
-    }
+    colors.add(popularColors1)
+    colors.add(popularColors2)
+    colors.add(popularColors3)
+    colors.add(popularColors4)
+    colors.add(popularColors5)
+    colors.add(popularColors6)
+//    repeat(totalCount) {
+//        val rowColors = List(6) { getRandomColor() }
+//        val rowColors = popularColors
+//        colors.add(rowColors)
+//    }
     return colors
 }
 
@@ -242,6 +256,7 @@ fun ColoredSquare(color: Color, viewModel: AddNewCategoryViewModel) {
             .clickable {
                 viewModel.setCategoryColor(color)
             }
+            .border(1.dp, color = Color.LightGray)
             .size(36.dp)
             .padding(4.dp)
             .background(color),
