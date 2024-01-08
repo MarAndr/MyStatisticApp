@@ -27,9 +27,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tracker.trackDailyHub.database.AppDatabase
 import com.tracker.trackDailyHub.database.Category
-import com.tracker.trackDailyHub.database.TimerData
-import com.tracker.trackDailyHub.ui.AddCategoryDialog
 import com.tracker.trackDailyHub.ui.AddMeasurementScreen
+import com.tracker.trackDailyHub.ui.AddNewCategoryScreen
 import com.tracker.trackDailyHub.ui.StatisticScreen
 import com.tracker.trackdailyhub.R
 import kotlinx.coroutines.delay
@@ -47,6 +46,7 @@ fun TrackDailyHub(
 
     val startScreenViewModel: StartScreenViewModel = viewModel()
     val addMeasurementScreenViewModel: AddMeasurementScreenViewModel = viewModel()
+    val addNewCategoryViewModel: AddNewCategoryViewModel = viewModel()
 
     val coroutineScope = rememberCoroutineScope()
     val createdCategory by remember {
@@ -99,9 +99,6 @@ fun TrackDailyHub(
                     viewModel = addMeasurementScreenViewModel,
                     snackbarHostState = snackBarHostState,
                     onSaveClick = { startScreenViewModel.dropTimer() },
-                    onAddButtonClick = {
-                        showDialog = true
-                    },
                     onNavigateBack = {
                         timerState = TimerState.RUNNING
                         coroutineScope.launch {
@@ -120,37 +117,44 @@ fun TrackDailyHub(
                     }
                 )
             }
+            composable(route = TrackDailyHubDestination.AddNewCategoryScreen.route) {
+                AddNewCategoryScreen(
+                    navHostController = navController,
+                    viewModel = addNewCategoryViewModel,
+                )
+            }
             composable(route = TrackDailyHubDestination.StatisticScreen.route) {
                 StatisticScreen(db = db)
             }
         }
 
-        if (showDialog) {
-            AddCategoryDialog(
-                onConfirmClick = {
-                    val newTimer =
-                        TimerData(category = createdCategory, timeInSeconds = currentTime)
-                    coroutineScope.launch {
-                        snackBarHostState.showSnackbar("30 мин было добавлено в $createdCategory")
 
-                        db.categoryDao()
-                            .insertUniqueCategory(
-                                Category(
-                                    name = createdCategory.name,
-                                    iconResourceId = R.drawable.solar_play_bold
-                                )
-                            )
-                        db.timerDao().insertTimer(newTimer)
-                    }
-                    showDialog = false
-                },
-                onCancelClick = { showDialog = false },
-                onTextFieldChange = {
-//                    createdCategory = it
-                },
-                db = db
-            )
-        }
+//        if (showDialog) {
+//            AddCategoryDialog(
+//                onConfirmClick = {
+//                    val newTimer =
+//                        TimerData(category = createdCategory, timeInSeconds = currentTime)
+//                    coroutineScope.launch {
+//                        snackBarHostState.showSnackbar("30 мин было добавлено в $createdCategory")
+//
+//                        db.categoryDao()
+//                            .insertUniqueCategory(
+//                                Category(
+//                                    name = createdCategory.name,
+//                                    iconResourceId = R.drawable.solar_play_bold
+//                                )
+//                            )
+//                        db.timerDao().insertTimer(newTimer)
+//                    }
+//                    showDialog = false
+//                },
+//                onCancelClick = { showDialog = false },
+//                onTextFieldChange = {
+////                    createdCategory = it
+//                },
+//                db = db
+//            )
+//        }
     }
 }
 

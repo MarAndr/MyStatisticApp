@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.tracker.trackDailyHub.AddMeasurementScreenViewModel
+import com.tracker.trackDailyHub.TrackDailyHubDestination
 import com.tracker.trackDailyHub.database.Category
 import com.tracker.trackDailyHub.database.TimerData
 import com.tracker.trackDailyHub.ui.theme.Gray100
@@ -57,7 +58,6 @@ fun AddMeasurementScreen(
     snackbarHostState: SnackbarHostState,
     viewModel: AddMeasurementScreenViewModel,
     onSaveClick: () -> Unit,
-    onAddButtonClick: () -> Unit,
     onNavigateBack: () -> Unit,
 ) {
 
@@ -115,7 +115,9 @@ fun AddMeasurementScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            AddNewCategoryBlock(onAddButtonClick)
+            AddNewCategoryBlock{
+                navController.navigate(TrackDailyHubDestination.AddNewCategoryScreen.route)
+            }
             CategoriesList(
                 categories = categories,
                 selectedCategory = selectedCategory,

@@ -22,6 +22,10 @@ class TrackRepositoryImpl @Inject constructor(
         timerDao.insertTimer(track)
     }
 
+    override suspend fun isCategoryNameUnique(categoryName: String): Boolean {
+        return categoryDao.isCategoryNameUnique(categoryName)
+    }
+
     override suspend fun getCategories(): Flow<List<Category>> {
         return categoryDao.getAllCategories()
     }

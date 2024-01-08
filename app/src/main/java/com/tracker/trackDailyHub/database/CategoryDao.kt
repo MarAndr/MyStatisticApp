@@ -21,7 +21,6 @@ interface CategoryDao {
     @Query("SELECT * FROM Category WHERE name = :categoryName LIMIT 1")
     suspend fun getCategoryByName(categoryName: String): Category?
 
-    // Функция для вставки категории, проверяя уникальность имени
     @Transaction
     suspend fun insertUniqueCategory(category: Category) {
         val existingCategory = getCategoryByName(category.name)
@@ -30,5 +29,14 @@ interface CategoryDao {
         } else {
             throw IllegalArgumentException("Category with the same name already exists")
         }
+    }
+
+    @Query("SELECT COUNT(*) FROM Category WHERE name = :categoryName")
+    suspend fun getCategoryCountByName(categoryName: String): Int
+
+    @Transaction
+    suspend fun isCategoryNameUnique(categoryName: String): Boolean {
+        val count = getCategoryCountByName(categoryName)
+        return count == 0
     }
 }
