@@ -111,10 +111,12 @@ fun AddNewCategoryScreen(
             Icon(
                 modifier = Modifier.padding(end = 12.dp),
                 painter = painterResource(id = R.drawable.ic_choose_icon),
+                tint= Color.Unspecified,
                 contentDescription = ""
             )
             Icon(
                 painter = painterResource(id = R.drawable.choose_color),
+                tint= Color.Unspecified,
                 contentDescription = ""
             )
             Spacer(modifier = Modifier.weight(1f))

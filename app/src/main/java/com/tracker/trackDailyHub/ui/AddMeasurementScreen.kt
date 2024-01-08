@@ -180,6 +180,7 @@ fun CategoriesList(
                     Spacer(modifier = Modifier.width(16.dp))
                     Icon(
                         painter = painterResource(id = category.iconResourceId),
+                        tint= Color.Unspecified,
                         contentDescription = null,
                     )
                     Text(
