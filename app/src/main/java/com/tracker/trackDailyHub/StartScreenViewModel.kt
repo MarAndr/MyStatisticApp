@@ -13,9 +13,9 @@ import javax.inject.Inject
 @HiltViewModel
 class StartScreenViewModel @Inject constructor() : ViewModel() {
 
-    private val _startScreenState = MutableStateFlow(StartScreenState(time = 0L, timerState = TimerState.INITIAL))
+    private val _startScreenState =
+        MutableStateFlow(StartScreenState(time = 0L, timerState = TimerState.INITIAL))
     val startScreenState: StateFlow<StartScreenState> = _startScreenState.asStateFlow()
-    private val currentState = _startScreenState.value
 
 
     fun startTimer() {
@@ -32,11 +32,12 @@ class StartScreenViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun dropTimer(){
-        _startScreenState.value = _startScreenState.value.copy(time = 0L, timerState = TimerState.INITIAL)
+    fun dropTimer() {
+        _startScreenState.value =
+            _startScreenState.value.copy(time = 0L, timerState = TimerState.INITIAL)
     }
 
-    fun pauseTimer(){
+    fun pauseTimer() {
         _startScreenState.value = _startScreenState.value.copy(timerState = TimerState.PAUSED)
     }
 }

@@ -10,6 +10,7 @@ data class StatisticScreenState(
     val selectedChart: CHART,
     val totalTime: Long = 0L,
     val averageDayTime: Long = 0L,
+    val totalTimeForEachCategory: Map<Category, Long> = emptyMap()
 )
 
 enum class StatisticPeriod(val text: String){
@@ -17,6 +18,7 @@ enum class StatisticPeriod(val text: String){
     WEEK(text = "Week"),
     MONTH(text = "Month"),
     YEAR(text = "Year"),
+    ALL(text = "All Time")
 }
 
 enum class CHART{

@@ -62,7 +62,7 @@ import com.tracker.trackdailyhub.R
 fun StatisticScreen(
     viewModel: StatisticViewModel,
     navController: NavHostController,
-    db: AppDatabase
+    db: AppDatabase,
 ) {
     val timers = db.timerDao().getAllTimers()
     val timersState = timers.collectAsState(initial = listOf()).value
@@ -84,15 +84,21 @@ fun StatisticScreen(
         mutableStateOf(false)
     }
 
+    var totalTimeForEachCategory by remember {
+        mutableStateOf(emptyMap<Category, Long>())
+    }
+
     timersState.forEach { timerData ->
         categoryToTotalTime[timerData.category.name] =
             categoryToTotalTime.getOrDefault(timerData.category.name, 0) + timerData.timeInSeconds
     }
 
     LaunchedEffect(viewModel.statisticScreenState) {
+        viewModel.loadCategories()
         viewModel.statisticScreenState.collect {
             categories = it.categories
             currentPeriod = it.selectedPeriod
+            totalTimeForEachCategory = it.totalTimeForEachCategory
         }
     }
 
@@ -168,7 +174,7 @@ fun StatisticScreen(
                         contentDescription = "",
                         tint = Color.Unspecified
                     )
-                    Text(text = "${category.name} - $totalTime")
+                    Text(text = "${category.name} - ${totalTimeForEachCategory[category]}")
                 }
             }
         })

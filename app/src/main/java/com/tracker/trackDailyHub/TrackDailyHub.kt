@@ -9,12 +9,8 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
@@ -26,13 +22,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tracker.trackDailyHub.database.AppDatabase
-import com.tracker.trackDailyHub.database.Category
 import com.tracker.trackDailyHub.ui.AddMeasurementScreen
 import com.tracker.trackDailyHub.ui.AddNewCategoryScreen
 import com.tracker.trackDailyHub.ui.StatisticScreen
 import com.tracker.trackdailyhub.R
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun TrackDailyHub(
@@ -50,18 +43,6 @@ fun TrackDailyHub(
     val statisticViewModel: StatisticViewModel = viewModel()
 
     val coroutineScope = rememberCoroutineScope()
-    val createdCategory by remember {
-        mutableStateOf(
-            Category(
-                name = "",
-                iconResourceId = R.drawable.solar_play_bold
-            )
-        )
-    }
-    var timerState by remember { mutableStateOf<TimerState>(TimerState.INITIAL) }
-    var currentTime by remember { mutableLongStateOf(0L) }
-    var showBottomBar by remember { mutableStateOf(true) }
-    var showDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         snackbarHost = {
@@ -78,7 +59,6 @@ fun TrackDailyHub(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(route = TrackDailyHubDestination.StartScreen.route) {
-                showBottomBar = true
                 StartScreen(
                     navController = navController,
                     viewModel = startScreenViewModel,
@@ -94,26 +74,12 @@ fun TrackDailyHub(
                     }
                 )
             ) {
-                showBottomBar = false
                 AddMeasurementScreen(
                     navController = navController,
                     viewModel = addMeasurementScreenViewModel,
                     snackbarHostState = snackBarHostState,
                     onSaveClick = { startScreenViewModel.dropTimer() },
                     onNavigateBack = {
-                        timerState = TimerState.RUNNING
-                        coroutineScope.launch {
-                            snackBarHostState.showSnackbar("You did not specify a category for the measurement; the current measurement has not been saved.")
-                        }
-                        coroutineScope.launch {
-                            while (timerState == TimerState.RUNNING) {
-                                delay(1000)
-                                if (timerState == TimerState.RUNNING) {
-                                    currentTime++
-                                }
-                            }
-                        }
-
                         navController.navigateUp()
                     }
                 )

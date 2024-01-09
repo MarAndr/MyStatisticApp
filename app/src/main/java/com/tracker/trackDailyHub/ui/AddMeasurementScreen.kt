@@ -51,6 +51,7 @@ import com.tracker.trackDailyHub.ui.theme.Gray100
 import com.tracker.trackDailyHub.ui.theme.Green800
 import com.tracker.trackdailyhub.R
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 @Composable
 fun AddMeasurementScreen(
@@ -137,7 +138,11 @@ fun AddMeasurementScreen(
                 onSaveClick()
                 coroutineScope.launch {
                     viewModel.addTrackWithExistedCategory(
-                        track = TimerData(category = selectedCategory, timeInSeconds = timeArg)
+                        track = TimerData(
+                            category = selectedCategory,
+                            timeInSeconds = timeArg,
+                            date = LocalDateTime.now()
+                        )
                     )
                     snackbarHostState.showSnackbar("$timeArg было добавлено в ${selectedCategory.name}")
                 }

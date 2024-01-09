@@ -7,7 +7,7 @@ import androidx.room.TypeConverters
 
 // Room Database setup
 @Database(entities = [TimerData::class, Category::class], version = 1)
-@TypeConverters(CategoryConverter::class)
+@TypeConverters(CategoryConverter::class, LocalDateTimeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun timerDao(): TimerDao
     abstract fun categoryDao(): CategoryDao
