@@ -1,9 +1,7 @@
 package com.tracker.trackDailyHub.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -16,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.AppBarDefaults
 import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
+import androidx.compose.material.DropdownMenu
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -23,6 +22,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -51,6 +51,7 @@ import co.yml.charts.ui.linechart.model.LineStyle
 import co.yml.charts.ui.linechart.model.SelectionHighlightPoint
 import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
+import com.tracker.trackDailyHub.StatisticPeriod
 import com.tracker.trackDailyHub.StatisticViewModel
 import com.tracker.trackDailyHub.database.AppDatabase
 import com.tracker.trackDailyHub.database.Category
@@ -75,56 +76,73 @@ fun StatisticScreen(
         mutableStateOf(0L)
     }
 
+    var currentPeriod by remember {
+        mutableStateOf(StatisticPeriod.DAY)
+    }
+
+    var isDropDownPeriodShown by remember {
+        mutableStateOf(false)
+    }
+
     timersState.forEach { timerData ->
         categoryToTotalTime[timerData.category.name] =
             categoryToTotalTime.getOrDefault(timerData.category.name, 0) + timerData.timeInSeconds
     }
 
-    LaunchedEffect(viewModel.statisticScreenState){
-        viewModel.statisticScreenState.collect{
+    LaunchedEffect(viewModel.statisticScreenState) {
+        viewModel.statisticScreenState.collect {
             categories = it.categories
+            currentPeriod = it.selectedPeriod
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
+    Column(
+        modifier = Modifier.fillMaxSize()
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
 
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(id = R.string.statistics_screen_title),
-                        style = MaterialTheme.typography.h2,
-                        modifier = Modifier.fillMaxWidth()
+        TopAppBar(
+            title = {
+                Text(
+                    text = stringResource(id = R.string.statistics_screen_title),
+                    style = MaterialTheme.typography.h2,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            navigationIcon = {
+                IconButton(onClick = {
+                    navController.navigateUp()
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.Black
                     )
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.navigateUp()
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back",
-                            tint = Color.Black
-                        )
-                    }
-                },
-                backgroundColor = Color.White,
-                elevation = AppBarDefaults.TopAppBarElevation
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-            Row {
-                Spacer(modifier = Modifier.weight(1f))
-                Button(onClick = {}) {
-                    Text(text = "Period")
                 }
+            },
+            backgroundColor = Color.White,
+            elevation = AppBarDefaults.TopAppBarElevation
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+        Row(Modifier.padding(horizontal = 16.dp)) {
+            Spacer(modifier = Modifier.weight(1f))
+            Button(onClick = {
+                isDropDownPeriodShown = !isDropDownPeriodShown
+            }) {
+                Text(text = currentPeriod.text)
+                DropDownMenu(
+                    isDropDownShown = isDropDownPeriodShown,
+                    onDismissRequest = {
+                        isDropDownPeriodShown = false
+                    },
+                    viewModel = viewModel,
+                    onItemClick = {
+                        isDropDownPeriodShown = false
+                    }
+                )
             }
+        }
+        Box(Modifier.padding(horizontal = 16.dp)) {
             SingleLineChartWithGridLines(
                 DataUtils.getLineChartData(
                     100,
@@ -132,27 +150,29 @@ fun StatisticScreen(
                     maxRange = 100
                 )
             )
-            LazyColumn(content = {
-                item {
-                    Row(Modifier.fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
-                        Checkbox(checked = true, onCheckedChange = {})
-                        Text(text = "All categories")
-                    }
-                }
-                items(categories){ category ->
-                    Row(Modifier.fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
-                        Checkbox(checked = true, onCheckedChange = {})
-                        Icon(modifier = Modifier.padding(end = 4.dp), painter = painterResource(id = category.iconResourceId), contentDescription = "", tint = Color.Unspecified)
-                        Text(text = "${category.name} - $totalTime")
-                    }
-                }
-            })
-
         }
+
+        LazyColumn(Modifier.padding(horizontal = 16.dp), content = {
+            item {
+                Row(Modifier.fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(checked = true, onCheckedChange = {})
+                    Text(text = "All categories")
+                }
+            }
+            items(categories) { category ->
+                Row(Modifier.fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(checked = true, onCheckedChange = {})
+                    Icon(
+                        modifier = Modifier.padding(end = 4.dp),
+                        painter = painterResource(id = category.iconResourceId),
+                        contentDescription = "",
+                        tint = Color.Unspecified
+                    )
+                    Text(text = "${category.name} - $totalTime")
+                }
+            }
+        })
     }
-
-//    SectionList(sections = categoryToTotalTime)
-
 }
 
 @Composable
@@ -201,30 +221,6 @@ fun SingleLineChartWithGridLines(pointsData: List<Point>) {
 
 }
 
-
-@Composable
-fun SectionList(sections: Map<String, Long>) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp)
-    ) {
-        items(sections.toList()) { (category, timeInSeconds) ->
-            SectionItem(category, timeInSeconds)
-        }
-    }
-}
-
-@Composable
-fun SectionItem(category: String, duration: Long) {
-    Column(
-        modifier = Modifier.padding(8.dp)
-    ) {
-        Text(text = "Название раздела: $category")
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(text = "Продолжительность: ${formatTime(duration)}")
-    }
-}
-
 fun formatTime(seconds: Long): String {
     val minutes = seconds / 60
     val remainingSeconds = seconds % 60
@@ -232,5 +228,25 @@ fun formatTime(seconds: Long): String {
         "$minutes min"
     } else {
         "$remainingSeconds sec"
+    }
+}
+
+@Composable
+fun DropDownMenu(
+    isDropDownShown: Boolean,
+    onDismissRequest: () -> Unit,
+    viewModel: StatisticViewModel,
+    onItemClick: () -> Unit,
+) {
+    DropdownMenu(
+        expanded = isDropDownShown,
+        onDismissRequest = onDismissRequest,
+    ) {
+        StatisticPeriod.entries.forEach { period ->
+            DropdownMenuItem(text = { Text(text = period.text) }, onClick = {
+                viewModel.setPeriod(period)
+                onItemClick()
+            })
+        }
     }
 }

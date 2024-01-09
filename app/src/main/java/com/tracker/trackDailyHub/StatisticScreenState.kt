@@ -12,11 +12,11 @@ data class StatisticScreenState(
     val averageDayTime: Long = 0L,
 )
 
-enum class StatisticPeriod{
-    DAY,
-    WEEK,
-    MONTH,
-    YEAR,
+enum class StatisticPeriod(val text: String){
+    DAY(text = "Day"),
+    WEEK(text = "Week"),
+    MONTH(text = "Month"),
+    YEAR(text = "Year"),
 }
 
 enum class CHART{

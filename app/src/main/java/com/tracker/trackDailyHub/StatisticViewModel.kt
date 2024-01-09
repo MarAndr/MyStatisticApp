@@ -28,6 +28,11 @@ class StatisticViewModel @Inject constructor(
     )
     val statisticScreenState: StateFlow<StatisticScreenState> = _statisticScreenState
 
+    fun setPeriod(period: StatisticPeriod){
+        _statisticScreenState.value =
+            _statisticScreenState.value.copy(selectedPeriod = period)
+    }
+
     private fun loadCategories() {
         viewModelScope.launch {
             trackRepository.getCategories()
