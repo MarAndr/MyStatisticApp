@@ -5,4 +5,5 @@ sealed class AddNewCategoryEvent {
     object CategoryNameNotUnique : AddNewCategoryEvent()
     object ColorNotChosen : AddNewCategoryEvent()
     object IconNotChosen : AddNewCategoryEvent()
+    object ValidationSuccess : AddNewCategoryEvent()
 }

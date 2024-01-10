@@ -38,6 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.tracker.trackDailyHub.AddNewCategoryEvent
 import com.tracker.trackDailyHub.AddNewCategoryValidationState
 import com.tracker.trackDailyHub.AddNewCategoryViewModel
 import com.tracker.trackDailyHub.TrackDailyHubDestination
@@ -88,6 +89,10 @@ fun AddNewCategoryScreen(
         mutableStateOf(false)
     }
 
+    var events by remember {
+        mutableStateOf<AddNewCategoryEvent>(AddNewCategoryEvent.CategoryFieldEmpty)
+    }
+
     val coroutineScope = rememberCoroutineScope()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -97,6 +102,14 @@ fun AddNewCategoryScreen(
         viewModel.newCategoryData.collect {
             chosenCategoryColor = it.color ?: Color.Unspecified
             chosenCategoryIcon = it.icon ?: R.drawable.ic_choose_icon
+        }
+    }
+
+    LaunchedEffect(viewModel.events){
+        viewModel.events.collect{
+            if (it != null) {
+                events = it
+            }
         }
     }
 
@@ -153,6 +166,7 @@ fun AddNewCategoryScreen(
                     .padding(end = 12.dp)
                     .border(1.dp, color = Color.LightGray)
                     .clickable {
+                        isColorClicked = false
                         isIconClicked = !isIconClicked
                     },
                 painter = painterResource(id = chosenCategoryIcon),
@@ -163,6 +177,7 @@ fun AddNewCategoryScreen(
                 modifier = Modifier
                     .border(1.dp, color = Color.LightGray)
                     .clickable {
+                        isIconClicked = false
                         isColorClicked = !isColorClicked
                     },
                 painter = painterResource(id = R.drawable.choose_color),
@@ -178,12 +193,12 @@ fun AddNewCategoryScreen(
                 shape = RoundedCornerShape(16.dp),
                 onClick = {
                     coroutineScope.launch {
-                        viewModel.addTrackWithNewCategory(timeArg)
                         onSaveClick()
-                        snackbarHostState.showSnackbar("$timeArg было добавлено в $createdCategoryName")
-                    }
-                    navController.navigate(route = TrackDailyHubDestination.StartScreen.route).apply {
-
+                        if (events == AddNewCategoryEvent.ValidationSuccess){
+                            navController.navigate(TrackDailyHubDestination.StartScreen.route)
+                            snackbarHostState.showSnackbar("Added")
+                        }
+                        viewModel.addTrackWithNewCategory(timeArg)
                     }
                 }
             ) {
@@ -191,11 +206,15 @@ fun AddNewCategoryScreen(
             }
         }
         if (isColorClicked) {
-            ColorGrid(viewModel)
+            ColorGrid(viewModel){
+                isColorClicked = false
+            }
         }
 
         if (isIconClicked){
-            IconGrid(viewModel)
+            IconGrid(viewModel){
+                isIconClicked = false
+            }
         }
     }
 }
@@ -232,7 +251,7 @@ enum class CategoryError(val supportText: String) {
 }
 
 @Composable
-fun ColorGrid(viewModel: AddNewCategoryViewModel) {
+fun ColorGrid(viewModel: AddNewCategoryViewModel, onColorClick: () -> Unit) {
     val colors = getColors()
 
     LazyColumn(
@@ -248,7 +267,7 @@ fun ColorGrid(viewModel: AddNewCategoryViewModel) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 colorRow.forEach { color ->
-                    ColoredSquare(color = color, viewModel = viewModel)
+                    ColoredSquare(color = color, viewModel = viewModel, onColorClick = onColorClick)
                 }
             }
         }
@@ -256,7 +275,7 @@ fun ColorGrid(viewModel: AddNewCategoryViewModel) {
 }
 
 @Composable
-fun IconGrid(viewModel: AddNewCategoryViewModel) {
+fun IconGrid(viewModel: AddNewCategoryViewModel, onColorClick: () -> Unit) {
     val icons = getIcons()
 
     LazyColumn(
@@ -272,7 +291,7 @@ fun IconGrid(viewModel: AddNewCategoryViewModel) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 colorRow.forEach { icon ->
-                    IconsSquare(icon = icon, viewModel = viewModel)
+                    IconsSquare(icon = icon, viewModel = viewModel, onColorClick = onColorClick)
                 }
             }
         }
@@ -301,11 +320,12 @@ fun getIcons(): List<List<Int>> {
 }
 
 @Composable
-fun ColoredSquare(color: Color, viewModel: AddNewCategoryViewModel) {
+fun ColoredSquare(color: Color, viewModel: AddNewCategoryViewModel, onColorClick: () -> Unit) {
     Box(
         modifier = Modifier
             .clickable {
                 viewModel.setCategoryColor(color)
+                onColorClick()
             }
             .border(1.dp, color = Color.LightGray)
             .size(36.dp)
@@ -317,14 +337,14 @@ fun ColoredSquare(color: Color, viewModel: AddNewCategoryViewModel) {
 }
 
 @Composable
-fun IconsSquare(icon: Int, viewModel: AddNewCategoryViewModel) {
+fun IconsSquare(icon: Int, viewModel: AddNewCategoryViewModel, onColorClick: () -> Unit) {
     Box(
         modifier = Modifier
             .clickable {
                 viewModel.setCategoryIcon(icon)
+                onColorClick()
             }
             .border(1.dp, color = Color.LightGray)
-            .size(36.dp)
             .padding(4.dp),
     ) {
         Image(painter = painterResource(id = icon), contentDescription = "")

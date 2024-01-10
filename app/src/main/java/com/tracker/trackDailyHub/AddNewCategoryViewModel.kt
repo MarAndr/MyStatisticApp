@@ -54,18 +54,24 @@ class AddNewCategoryViewModel @Inject constructor(
     }
 
     fun addTrackWithNewCategory(time: Long) {
-        viewModelScope.launch {
-            val category = Category(
-                name = _newCategoryData.value.categoryName,
-                iconResourceId = _newCategoryData.value.icon ?: 0,
-                color = _newCategoryData.value.color?.toArgb() ?: 0,
-            )
-            val track = TimerData(
-                category = category,
-                timeInSeconds = time,
-            )
-            repository.insertCategory(category)
-            repository.insertTrack(track)
+        val validationResult = validateNewCategoryData(_newCategoryData.value)
+        _errorState.value = validationResult
+        handleEvents(validationResult)
+        val category = Category(
+            name = _newCategoryData.value.categoryName,
+            iconResourceId = _newCategoryData.value.icon ?: 0,
+            color = _newCategoryData.value.color?.toArgb() ?: 0,
+        )
+        val track = TimerData(
+            category = category,
+            timeInSeconds = time,
+        )
+        if (validationResult.isValid()) {
+            _events.value = AddNewCategoryEvent.ValidationSuccess
+            viewModelScope.launch {
+                repository.insertCategory(category)
+                repository.insertTrack(track)
+            }
         }
     }
 
