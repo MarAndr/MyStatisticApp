@@ -4,15 +4,10 @@ package com.tracker.trackDailyHub
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -25,7 +20,6 @@ import com.tracker.trackDailyHub.database.AppDatabase
 import com.tracker.trackDailyHub.ui.AddMeasurementScreen
 import com.tracker.trackDailyHub.ui.AddNewCategoryScreen
 import com.tracker.trackDailyHub.ui.StatisticScreen
-import com.tracker.trackdailyhub.R
 
 @Composable
 fun TrackDailyHub(
@@ -41,8 +35,6 @@ fun TrackDailyHub(
     val addMeasurementScreenViewModel: AddMeasurementScreenViewModel = viewModel()
     val addNewCategoryViewModel: AddNewCategoryViewModel = viewModel()
     val statisticViewModel: StatisticViewModel = viewModel()
-
-    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         snackbarHost = {
@@ -95,7 +87,11 @@ fun TrackDailyHub(
             ) {
                 AddNewCategoryScreen(
                     navController = navController,
+                    snackbarHostState = snackBarHostState,
                     viewModel = addNewCategoryViewModel,
+                    onSaveClick = {
+                        startScreenViewModel.dropTimer()
+                    },
                 )
             }
             composable(route = TrackDailyHubDestination.StatisticScreen.route) {
@@ -108,22 +104,3 @@ fun TrackDailyHub(
         }
     }
 }
-
-sealed class BottomNavItem(val route: String, val resourceId: Int, val icon: ImageVector) {
-    object StartScreen : BottomNavItem(
-        TrackDailyHubDestination.StartScreen.route,
-        R.string.start_screen,
-        Icons.Default.Home
-    )
-
-    object StatisticScreen : BottomNavItem(
-        TrackDailyHubDestination.StatisticScreen.route,
-        R.string.statistic_screen,
-        Icons.Default.ThumbUp
-    )
-}
-
-val items = listOf(
-    BottomNavItem.StartScreen,
-    BottomNavItem.StatisticScreen
-)

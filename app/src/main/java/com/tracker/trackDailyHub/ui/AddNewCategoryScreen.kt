@@ -20,6 +20,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
@@ -54,7 +55,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun AddNewCategoryScreen(
     viewModel: AddNewCategoryViewModel,
+    snackbarHostState: SnackbarHostState,
     navController: NavHostController,
+    onSaveClick: () -> Unit,
 ) {
 
     var createdCategoryName by remember {
@@ -176,6 +179,8 @@ fun AddNewCategoryScreen(
                 onClick = {
                     coroutineScope.launch {
                         viewModel.addTrackWithNewCategory(timeArg)
+                        onSaveClick()
+                        snackbarHostState.showSnackbar("$timeArg было добавлено в $createdCategoryName")
                     }
                     navController.navigate(route = TrackDailyHubDestination.StartScreen.route).apply {
 
