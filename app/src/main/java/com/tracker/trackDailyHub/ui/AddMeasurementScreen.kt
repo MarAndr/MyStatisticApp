@@ -117,7 +117,7 @@ fun AddMeasurementScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             AddNewCategoryBlock{
-                navController.navigate(TrackDailyHubDestination.AddNewCategoryScreen.route)
+                navController.navigate(TrackDailyHubDestination.AddNewCategoryScreen.withArgs(timeArg))
             }
             CategoriesList(
                 categories = categories,

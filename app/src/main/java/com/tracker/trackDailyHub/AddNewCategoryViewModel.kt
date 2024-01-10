@@ -3,10 +3,13 @@ package com.tracker.trackDailyHub
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.tracker.trackDailyHub.database.Category
+import com.tracker.trackDailyHub.database.TimerData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
@@ -24,15 +27,15 @@ class AddNewCategoryViewModel @Inject constructor(
     private val _events = MutableStateFlow<AddNewCategoryEvent?>(null)
     val events: StateFlow<AddNewCategoryEvent?> = _events
 
-    fun setCategoryName(name: String){
+    fun setCategoryName(name: String) {
         _newCategoryData.value = _newCategoryData.value.copy(categoryName = name)
     }
 
-    fun setCategoryColor(color: Color){
+    fun setCategoryColor(color: Color) {
         _newCategoryData.value = _newCategoryData.value.copy(color = color)
     }
 
-    fun setCategoryIcon(iconId: Int){
+    fun setCategoryIcon(iconId: Int) {
         _newCategoryData.value = _newCategoryData.value.copy(icon = iconId)
     }
 
@@ -47,6 +50,22 @@ class AddNewCategoryViewModel @Inject constructor(
                 iconResourceId = _newCategoryData.value.icon ?: 0,
             )
             repository.insertCategory(newCategory)
+        }
+    }
+
+    fun addTrackWithNewCategory(time: Long) {
+        viewModelScope.launch {
+            val category = Category(
+                name = _newCategoryData.value.categoryName,
+                iconResourceId = _newCategoryData.value.icon ?: 0,
+                color = _newCategoryData.value.color?.toArgb() ?: 0,
+            )
+            val track = TimerData(
+                category = category,
+                timeInSeconds = time,
+            )
+            repository.insertCategory(category)
+            repository.insertTrack(track)
         }
     }
 

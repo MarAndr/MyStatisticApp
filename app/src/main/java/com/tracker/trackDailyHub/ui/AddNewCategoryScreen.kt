@@ -36,8 +36,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.tracker.trackDailyHub.AddNewCategoryValidationState
 import com.tracker.trackDailyHub.AddNewCategoryViewModel
+import com.tracker.trackDailyHub.TrackDailyHubDestination
 import com.tracker.trackDailyHub.categoriesIcons
 import com.tracker.trackDailyHub.popularColors1
 import com.tracker.trackDailyHub.popularColors2
@@ -52,7 +54,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun AddNewCategoryScreen(
     viewModel: AddNewCategoryViewModel,
-    navHostController: NavHostController,
+    navController: NavHostController,
 ) {
 
     var createdCategoryName by remember {
@@ -84,6 +86,9 @@ fun AddNewCategoryScreen(
     }
 
     val coroutineScope = rememberCoroutineScope()
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val timeArg = navBackStackEntry?.arguments?.getLong("time") ?: 0L
 
     LaunchedEffect(viewModel.newCategoryData) {
         viewModel.newCategoryData.collect {
@@ -121,6 +126,7 @@ fun AddNewCategoryScreen(
     }
 
     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(text = "Save the measurement to a new category", style = MaterialTheme.typography.h2, modifier = Modifier.padding(bottom = 16.dp))
         OutlinedTextField(
             label = {
                 Text(text = "Type New Category")
@@ -169,7 +175,10 @@ fun AddNewCategoryScreen(
                 shape = RoundedCornerShape(16.dp),
                 onClick = {
                     coroutineScope.launch {
-                        viewModel.createNewCategory()
+                        viewModel.addTrackWithNewCategory(timeArg)
+                    }
+                    navController.navigate(route = TrackDailyHubDestination.StartScreen.route).apply {
+
                     }
                 }
             ) {

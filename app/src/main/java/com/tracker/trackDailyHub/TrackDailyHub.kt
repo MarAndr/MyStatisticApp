@@ -84,9 +84,17 @@ fun TrackDailyHub(
                     }
                 )
             }
-            composable(route = TrackDailyHubDestination.AddNewCategoryScreen.route) {
+            composable(route = TrackDailyHubDestination.AddNewCategoryScreen.route + "/{time}",
+                arguments = listOf(
+                    navArgument("time") {
+                        type = NavType.LongType
+                        defaultValue = 0L
+                        nullable = false
+                    }
+                )
+            ) {
                 AddNewCategoryScreen(
-                    navHostController = navController,
+                    navController = navController,
                     viewModel = addNewCategoryViewModel,
                 )
             }
@@ -98,44 +106,8 @@ fun TrackDailyHub(
                 )
             }
         }
-
-
-//        if (showDialog) {
-//            AddCategoryDialog(
-//                onConfirmClick = {
-//                    val newTimer =
-//                        TimerData(category = createdCategory, timeInSeconds = currentTime)
-//                    coroutineScope.launch {
-//                        snackBarHostState.showSnackbar("30 мин было добавлено в $createdCategory")
-//
-//                        db.categoryDao()
-//                            .insertUniqueCategory(
-//                                Category(
-//                                    name = createdCategory.name,
-//                                    iconResourceId = R.drawable.solar_play_bold
-//                                )
-//                            )
-//                        db.timerDao().insertTimer(newTimer)
-//                    }
-//                    showDialog = false
-//                },
-//                onCancelClick = { showDialog = false },
-//                onTextFieldChange = {
-////                    createdCategory = it
-//                },
-//                db = db
-//            )
-//        }
     }
 }
-
-//fun formatTime(currentTime: Long): String {
-//    val hours = currentTime / 3600
-//    val minutes = (currentTime % 3600) / 60
-//    val seconds = currentTime % 60
-//
-//    return "%02d:%02d:%02d".format(hours, minutes, seconds)
-//}
 
 sealed class BottomNavItem(val route: String, val resourceId: Int, val icon: ImageVector) {
     object StartScreen : BottomNavItem(

@@ -10,5 +10,5 @@ data class TimerData(
     val id: Long = 0,
     val category: Category,
     val timeInSeconds: Long,
-    val date: LocalDateTime,
+    val date: LocalDateTime = LocalDateTime.now(),
 )
