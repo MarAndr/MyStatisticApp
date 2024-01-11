@@ -88,6 +88,18 @@ fun StatisticScreen(
         mutableStateOf(emptyMap<Category, Long>())
     }
 
+    var isAllCategoriesSelected by remember {
+        mutableStateOf(true)
+    }
+
+    var selectedCategories by remember {
+        mutableStateOf<List<Category>>(emptyList())
+    }
+
+    var isItemControlledByAllItem by remember {
+        mutableStateOf(true)
+    }
+
     timersState.forEach { timerData ->
         categoryToTotalTime[timerData.category.name] =
             categoryToTotalTime.getOrDefault(timerData.category.name, 0) + timerData.timeInSeconds
@@ -99,6 +111,8 @@ fun StatisticScreen(
             categories = it.categories
             currentPeriod = it.selectedPeriod
             totalTimeForEachCategory = it.totalTimeForEachCategory
+            isAllCategoriesSelected = it.isAllCategoriesSelected
+            selectedCategories = it.selectedCategories
         }
     }
 
@@ -161,13 +175,30 @@ fun StatisticScreen(
         LazyColumn(Modifier.padding(horizontal = 16.dp), content = {
             item {
                 Row(Modifier.fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(checked = true, onCheckedChange = {})
+                    Checkbox(checked = isAllCategoriesSelected, onCheckedChange = {
+                        viewModel.switchTheAllCategories(!it)
+                        isItemControlledByAllItem = true
+                    })
                     Text(text = "All categories")
                 }
             }
             items(categories) { category ->
+
+                val isCategoryChecked = if (isItemControlledByAllItem) {
+                    isAllCategoriesSelected
+                } else {
+                    selectedCategories.any {
+                        it == category
+                    }
+                }
+
                 Row(Modifier.fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(checked = true, onCheckedChange = {})
+                    Checkbox(checked = isCategoryChecked, onCheckedChange = {
+                        isItemControlledByAllItem = false
+                        isAllCategoriesSelected = false
+                        viewModel.changeCategoryChecking(category, it)
+                    }
+                    )
                     Icon(
                         modifier = Modifier.padding(end = 4.dp),
                         painter = painterResource(id = category.iconResourceId),

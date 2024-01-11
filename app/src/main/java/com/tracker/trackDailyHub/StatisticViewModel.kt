@@ -21,6 +21,7 @@ class StatisticViewModel @Inject constructor(
     private val trackRepository: ITrackRepository
 ) : ViewModel() {
 
+
     private val _statisticScreenState = MutableStateFlow(
         StatisticScreenState(
             categories = emptyList(),
@@ -32,9 +33,21 @@ class StatisticViewModel @Inject constructor(
     )
     val statisticScreenState: StateFlow<StatisticScreenState> = _statisticScreenState
 
-    fun setPeriod(period: StatisticPeriod){
+    fun setPeriod(period: StatisticPeriod) {
         _statisticScreenState.value =
             _statisticScreenState.value.copy(selectedPeriod = period)
+    }
+
+    fun changeCategoryChecking(category: Category, isChecked: Boolean) {
+        val currentSelectedCategories = _statisticScreenState.value.selectedCategories
+        val list = mutableListOf<Category>()
+        list.addAll(currentSelectedCategories)
+        if (isChecked) {
+            list.add(category)
+        } else {
+            list.remove(category)
+        }
+        _statisticScreenState.value = _statisticScreenState.value.copy(selectedCategories = list)
     }
 
     private suspend fun countTotalTime(categories: List<Category>) {
@@ -57,9 +70,26 @@ class StatisticViewModel @Inject constructor(
 
         deferredList.awaitAll()
 
-        _statisticScreenState.value = _statisticScreenState.value.copy(totalTimeForEachCategory = map)
+        _statisticScreenState.value =
+            _statisticScreenState.value.copy(totalTimeForEachCategory = map)
     }
 
+    fun switchTheAllCategories(isChecked: Boolean) {
+        val isAllCategoriesChecked = _statisticScreenState.value.isAllCategoriesSelected
+
+        if (isChecked) {
+            _statisticScreenState.value =
+                _statisticScreenState.value.copy(selectedCategories = emptyList())
+        } else {
+            val selectedCategories = mutableListOf<Category>()
+            selectedCategories.addAll(_statisticScreenState.value.categories)
+            _statisticScreenState.value =
+                _statisticScreenState.value.copy(selectedCategories = selectedCategories)
+        }
+
+        _statisticScreenState.value =
+            _statisticScreenState.value.copy(isAllCategoriesSelected = !isAllCategoriesChecked)
+    }
 
     fun loadCategories() {
         viewModelScope.launch {
