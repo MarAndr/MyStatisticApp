@@ -9,6 +9,10 @@ interface ITrackRepository {
     suspend fun insertDefaultCategories()
     suspend fun getCategories(): Flow<List<Category>>
     suspend fun insertTrack(track: TimerData)
-    suspend fun getTotalTimeForCategory(category: Category): Flow<Long?>
+    suspend fun getTotalTimeForCategoryAllTime(category: Category): Flow<Long?>
+    suspend fun getTotalTimeForCategoryToday(category: Category): Flow<Long?>
+    suspend fun getTotalTimeForCategoryThisWeek(category: Category): Flow<Long?>
+    suspend fun getTotalTimeForCategoryThisMonth(category: Category): Flow<Long?>
+    suspend fun getTotalTimeForCategoryThisYear(category: Category): Flow<Long?>
     suspend fun isCategoryNameUnique(categoryName: String): Boolean
 }

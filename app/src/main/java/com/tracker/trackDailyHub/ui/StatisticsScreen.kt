@@ -85,7 +85,7 @@ fun StatisticScreen(
     }
 
     var totalTimeForEachCategory by remember {
-        mutableStateOf(emptyMap<Category, Long>())
+        mutableStateOf(emptyMap<Category, Long?>())
     }
 
     var isAllCategoriesSelected by remember {
@@ -205,7 +205,7 @@ fun StatisticScreen(
                         contentDescription = "",
                         tint = Color.Unspecified
                     )
-                    Text(text = "${category.name} - ${totalTimeForEachCategory[category]}")
+                    Text(text = "${category.name} - ${totalTimeForEachCategory[category]?:0L}")
                 }
             }
         })

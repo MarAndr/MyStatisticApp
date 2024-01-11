@@ -22,12 +22,28 @@ class TrackRepositoryImpl @Inject constructor(
         timerDao.insertTimer(track)
     }
 
-    override suspend fun getTotalTimeForCategory(category: Category): Flow<Long?> {
-        return timerDao.getTotalTimeForCategory(category)
+    override suspend fun getTotalTimeForCategoryAllTime(category: Category): Flow<Long?> {
+        return timerDao.getTotalTimeForCategoryAllTime(category)
+    }
+
+    override suspend fun getTotalTimeForCategoryToday(category: Category): Flow<Long?> {
+        return timerDao.getTotalTimeForCategoryToday(category)
+    }
+
+    override suspend fun getTotalTimeForCategoryThisWeek(category: Category): Flow<Long?> {
+        return timerDao.getTotalTimeForCategoryThisWeek(category)
     }
 
     override suspend fun isCategoryNameUnique(categoryName: String): Boolean {
         return categoryDao.isCategoryNameUnique(categoryName)
+    }
+
+    override suspend fun getTotalTimeForCategoryThisMonth(category: Category): Flow<Long?> {
+        return timerDao.getTotalTimeForCategoryThisMonth(category)
+    }
+
+    override suspend fun getTotalTimeForCategoryThisYear(category: Category): Flow<Long?> {
+        return timerDao.getTotalTimeForCategoryThisYear(category)
     }
 
     override suspend fun getCategories(): Flow<List<Category>> {

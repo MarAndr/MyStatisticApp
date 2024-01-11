@@ -36,6 +36,12 @@ class StatisticViewModel @Inject constructor(
     fun setPeriod(period: StatisticPeriod) {
         _statisticScreenState.value =
             _statisticScreenState.value.copy(selectedPeriod = period)
+        viewModelScope.launch {
+            countTotalTime(
+                categories = _statisticScreenState.value.categories,
+                period = period,
+            )
+        }
     }
 
     fun changeCategoryChecking(category: Category, isChecked: Boolean) {
@@ -50,14 +56,31 @@ class StatisticViewModel @Inject constructor(
         _statisticScreenState.value = _statisticScreenState.value.copy(selectedCategories = list)
     }
 
-    private suspend fun countTotalTime(categories: List<Category>) {
+    private suspend fun countTotalTime(categories: List<Category>, period: StatisticPeriod) {
         val map = mutableMapOf<Category, Long>()
 
         val deferredList = mutableListOf<Deferred<Unit>>()
 
         for (category in categories) {
             val deferred = CoroutineScope(Dispatchers.Default).async {
-                val totalTime = trackRepository.getTotalTimeForCategory(category).firstOrNull()
+                val totalTime = when(period){
+                    StatisticPeriod.DAY -> {
+                        trackRepository.getTotalTimeForCategoryToday(category).firstOrNull()
+                    }
+                    StatisticPeriod.WEEK -> {
+                        trackRepository.getTotalTimeForCategoryThisWeek(category).firstOrNull()
+                    }
+                    StatisticPeriod.MONTH -> {
+                        trackRepository.getTotalTimeForCategoryThisMonth(category).firstOrNull()
+                    }
+                    StatisticPeriod.YEAR -> {
+                        trackRepository.getTotalTimeForCategoryThisYear(category).firstOrNull()
+                    }
+                    StatisticPeriod.ALL -> {
+                        trackRepository.getTotalTimeForCategoryAllTime(category).firstOrNull()
+                    }
+                }
+
                 if (totalTime != null) {
                     withContext(Dispatchers.Main) {
                         map[category] = totalTime
@@ -97,7 +120,7 @@ class StatisticViewModel @Inject constructor(
                 .collect { categories ->
                     _statisticScreenState.value =
                         _statisticScreenState.value.copy(categories = categories)
-                    countTotalTime(categories)
+//                    countTotalTime(categories)
                 }
 
         }
