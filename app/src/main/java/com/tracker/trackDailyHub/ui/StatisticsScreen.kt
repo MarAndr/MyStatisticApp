@@ -24,7 +24,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -68,36 +67,24 @@ fun StatisticScreen(
     navController: NavHostController,
     db: AppDatabase,
 ) {
+    val statisticScreenState by viewModel.statisticScreenState.collectAsState()
+
+    val categories = statisticScreenState.categories
+    val currentPeriod = statisticScreenState.selectedPeriod
+    val totalTimeForEachCategory = statisticScreenState.totalTimeForEachCategory
+    val isAllCategoriesSelected = statisticScreenState.isAllCategoriesSelected
+    val selectedCategories = statisticScreenState.selectedCategories
+
     val timers = db.timerDao().getAllTimers()
     val timersState = timers.collectAsState(initial = listOf()).value
     val categoryToTotalTime = mutableMapOf<String, Long>()
-
-    var categories by remember {
-        mutableStateOf(listOf<Category>())
-    }
 
     var totalTime by remember {
         mutableStateOf(0L)
     }
 
-    var currentPeriod by remember {
-        mutableStateOf(StatisticPeriod.DAY)
-    }
-
     var isDropDownPeriodShown by remember {
         mutableStateOf(false)
-    }
-
-    var totalTimeForEachCategory by remember {
-        mutableStateOf(emptyMap<Category, Long?>())
-    }
-
-    var isAllCategoriesSelected by remember {
-        mutableStateOf(true)
-    }
-
-    var selectedCategories by remember {
-        mutableStateOf<List<Category>>(emptyList())
     }
 
     var isItemControlledByAllItem by remember {
@@ -107,17 +94,6 @@ fun StatisticScreen(
     timersState.forEach { timerData ->
         categoryToTotalTime[timerData.category.name] =
             categoryToTotalTime.getOrDefault(timerData.category.name, 0) + timerData.timeInSeconds
-    }
-
-    LaunchedEffect(viewModel.statisticScreenState) {
-        viewModel.loadCategories()
-        viewModel.statisticScreenState.collect {
-            categories = it.categories
-            currentPeriod = it.selectedPeriod
-            totalTimeForEachCategory = it.totalTimeForEachCategory
-            isAllCategoriesSelected = it.isAllCategoriesSelected
-            selectedCategories = it.selectedCategories
-        }
     }
 
     Column(
@@ -204,7 +180,6 @@ fun StatisticScreen(
                 Row(Modifier.fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(checked = isCategoryChecked, onCheckedChange = {
                         isItemControlledByAllItem = false
-                        isAllCategoriesSelected = false
                         viewModel.changeCategoryChecking(category, it)
                     }
                     )

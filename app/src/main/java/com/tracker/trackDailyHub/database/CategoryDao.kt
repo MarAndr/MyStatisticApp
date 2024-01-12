@@ -10,7 +10,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface CategoryDao {
     @Query("SELECT * FROM Category")
-    fun getAllCategories(): Flow<List<Category>>
+    suspend fun getAllCategories(): List<Category>
+
+    @Query("SELECT * FROM Category")
+    fun getAllCategoriesFlow(): Flow<List<Category>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCategory(category: Category)

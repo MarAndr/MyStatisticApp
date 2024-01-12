@@ -10,9 +10,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -21,8 +22,25 @@ class StatisticViewModel @Inject constructor(
     private val trackRepository: ITrackRepository
 ) : ViewModel() {
 
+    private val period = MutableStateFlow(StatisticPeriod.DAY)
+    private val selectedCategories = MutableStateFlow(emptyList<Category>())
 
-    private val _statisticScreenState = MutableStateFlow(
+    val statisticScreenState: StateFlow<StatisticScreenState> = combine(
+        period,
+        selectedCategories,
+        trackRepository.getCategoriesFlow(),
+    ) { period, selectedCategories, categories ->
+        StatisticScreenState(
+            categories = categories,
+            selectedCategories = selectedCategories,
+            selectedPeriod = period,
+            isAllCategoriesSelected = categories == selectedCategories,
+            selectedChart = CHART.BAR,
+            totalTimeForEachCategory = countTotalTime(categories, period)
+        )
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.Lazily,
         StatisticScreenState(
             categories = emptyList(),
             selectedCategories = emptyList(),
@@ -31,53 +49,48 @@ class StatisticViewModel @Inject constructor(
             selectedChart = CHART.BAR,
         )
     )
-    val statisticScreenState: StateFlow<StatisticScreenState> = _statisticScreenState
 
     fun setPeriod(period: StatisticPeriod) {
-        _statisticScreenState.value =
-            _statisticScreenState.value.copy(selectedPeriod = period)
-        viewModelScope.launch {
-            countTotalTime(
-                categories = _statisticScreenState.value.categories,
-                period = period,
-            )
-        }
+        this.period.value = period
     }
 
     fun changeCategoryChecking(category: Category, isChecked: Boolean) {
-        val currentSelectedCategories = _statisticScreenState.value.selectedCategories
-        val list = mutableListOf<Category>()
-        list.addAll(currentSelectedCategories)
         if (isChecked) {
-            list.add(category)
+            selectedCategories.value = selectedCategories.value + category
         } else {
-            list.remove(category)
+            selectedCategories.value = selectedCategories.value - category
         }
-        _statisticScreenState.value = _statisticScreenState.value.copy(selectedCategories = list)
     }
 
-    private suspend fun countTotalTime(categories: List<Category>, period: StatisticPeriod) {
+    private suspend fun countTotalTime(
+        categories: List<Category>,
+        period: StatisticPeriod
+    ): MutableMap<Category, Long> {
         val map = mutableMapOf<Category, Long>()
 
         val deferredList = mutableListOf<Deferred<Unit>>()
 
         for (category in categories) {
             val deferred = CoroutineScope(Dispatchers.Default).async {
-                val totalTime = when(period){
+                val totalTime = when (period) {
                     StatisticPeriod.DAY -> {
-                        trackRepository.getTotalTimeForCategoryToday(category).firstOrNull()
+                        trackRepository.getTotalTimeForCategoryToday(category)
                     }
+
                     StatisticPeriod.WEEK -> {
-                        trackRepository.getTotalTimeForCategoryThisWeek(category).firstOrNull()
+                        trackRepository.getTotalTimeForCategoryThisWeek(category)
                     }
+
                     StatisticPeriod.MONTH -> {
-                        trackRepository.getTotalTimeForCategoryThisMonth(category).firstOrNull()
+                        trackRepository.getTotalTimeForCategoryThisMonth(category)
                     }
+
                     StatisticPeriod.YEAR -> {
-                        trackRepository.getTotalTimeForCategoryThisYear(category).firstOrNull()
+                        trackRepository.getTotalTimeForCategoryThisYear(category)
                     }
+
                     StatisticPeriod.ALL -> {
-                        trackRepository.getTotalTimeForCategoryAllTime(category).firstOrNull()
+                        trackRepository.getTotalTimeForCategoryAllTime(category)
                     }
                 }
 
@@ -93,38 +106,14 @@ class StatisticViewModel @Inject constructor(
 
         deferredList.awaitAll()
 
-        _statisticScreenState.value =
-            _statisticScreenState.value.copy(totalTimeForEachCategory = map)
+        return map
     }
 
     fun switchTheAllCategories(isChecked: Boolean) {
-        val isAllCategoriesChecked = _statisticScreenState.value.isAllCategoriesSelected
-
         if (isChecked) {
-            _statisticScreenState.value =
-                _statisticScreenState.value.copy(selectedCategories = emptyList())
+            selectedCategories.value = emptyList()
         } else {
-            val selectedCategories = mutableListOf<Category>()
-            selectedCategories.addAll(_statisticScreenState.value.categories)
-            _statisticScreenState.value =
-                _statisticScreenState.value.copy(selectedCategories = selectedCategories)
-        }
-
-        _statisticScreenState.value =
-            _statisticScreenState.value.copy(isAllCategoriesSelected = !isAllCategoriesChecked)
-    }
-
-    fun loadCategories() {
-        viewModelScope.launch {
-            trackRepository.getCategories()
-                .collect { categories ->
-                    _statisticScreenState.value =
-                        _statisticScreenState.value.copy(categories = categories)
-//                    countTotalTime(categories)
-                }
-
+            selectedCategories.value = statisticScreenState.value.categories
         }
     }
-
-
 }

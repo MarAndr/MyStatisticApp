@@ -34,7 +34,7 @@ class AddMeasurementScreenViewModel @Inject constructor(
     private val currentState = _addMeasurementScreenState.value
 
     private suspend fun categoriesExistInDatabase(): Boolean {
-        val existingCategories = trackRepository.getCategories().firstOrNull()
+        val existingCategories = trackRepository.getCategoriesFlow().firstOrNull()
         return !existingCategories.isNullOrEmpty()
     }
 
@@ -53,7 +53,7 @@ class AddMeasurementScreenViewModel @Inject constructor(
 
     private fun loadCategories() {
         viewModelScope.launch {
-            trackRepository.getCategories()
+            trackRepository.getCategoriesFlow()
                 .collect { categories ->
                     _addMeasurementScreenState.value = currentState.copy(categories = categories)
                 }

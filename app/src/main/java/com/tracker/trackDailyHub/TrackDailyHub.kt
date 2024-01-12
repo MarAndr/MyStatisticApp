@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -31,11 +31,6 @@ fun TrackDailyHub(
         SnackbarHostState()
     }
 
-    val startScreenViewModel: StartScreenViewModel = viewModel()
-    val addMeasurementScreenViewModel: AddMeasurementScreenViewModel = viewModel()
-    val addNewCategoryViewModel: AddNewCategoryViewModel = viewModel()
-    val statisticViewModel: StatisticViewModel = viewModel()
-
     Scaffold(
         snackbarHost = {
             SnackbarHost(
@@ -50,7 +45,9 @@ fun TrackDailyHub(
             startDestination = TrackDailyHubDestination.StartScreen.route,
             modifier = Modifier.padding(innerPadding)
         ) {
+
             composable(route = TrackDailyHubDestination.StartScreen.route) {
+                val startScreenViewModel: StartScreenViewModel = hiltViewModel()
                 StartScreen(
                     navController = navController,
                     viewModel = startScreenViewModel,
@@ -66,11 +63,14 @@ fun TrackDailyHub(
                     }
                 )
             ) {
+                val addMeasurementScreenViewModel: AddMeasurementScreenViewModel = hiltViewModel()
                 AddMeasurementScreen(
                     navController = navController,
                     viewModel = addMeasurementScreenViewModel,
                     snackbarHostState = snackBarHostState,
-                    onSaveClick = { startScreenViewModel.dropTimer() },
+                    onSaveClick = {
+//                        startScreenViewModel.dropTimer()
+                    },
                     onNavigateBack = {
                         navController.navigateUp()
                     }
@@ -85,16 +85,18 @@ fun TrackDailyHub(
                     }
                 )
             ) {
+                val addNewCategoryViewModel: AddNewCategoryViewModel = hiltViewModel()
                 AddNewCategoryScreen(
                     navController = navController,
                     snackbarHostState = snackBarHostState,
                     viewModel = addNewCategoryViewModel,
                     onSaveClick = {
-                        startScreenViewModel.dropTimer()
+//                        startScreenViewModel.dropTimer()
                     },
                 )
             }
             composable(route = TrackDailyHubDestination.StatisticScreen.route) {
+                val statisticViewModel: StatisticViewModel = hiltViewModel()
                 StatisticScreen(
                     viewModel = statisticViewModel,
                     navController = navController,
