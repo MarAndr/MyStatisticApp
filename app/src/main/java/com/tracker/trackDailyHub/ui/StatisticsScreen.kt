@@ -38,9 +38,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import co.yml.charts.axis.AxisData
+import co.yml.charts.axis.DataCategoryOptions
 import co.yml.charts.common.extensions.formatToSinglePrecision
 import co.yml.charts.common.model.Point
 import co.yml.charts.common.utils.DataUtils
+import co.yml.charts.ui.barchart.BarChart
+import co.yml.charts.ui.barchart.models.BarChartData
+import co.yml.charts.ui.barchart.models.BarChartType
 import co.yml.charts.ui.linechart.LineChart
 import co.yml.charts.ui.linechart.model.GridLines
 import co.yml.charts.ui.linechart.model.IntersectionPoint
@@ -163,13 +167,18 @@ fun StatisticScreen(
             }
         }
         Box(Modifier.padding(horizontal = 16.dp)) {
-            SingleLineChartWithGridLines(
-                DataUtils.getLineChartData(
-                    100,
-                    start = 50,
-                    maxRange = 100
+            if (selectedCategories.size == 1){
+                SingleLineChartWithGridLines(
+                    DataUtils.getLineChartData(
+                        100,
+                        start = 50,
+                        maxRange = 100
+                    )
                 )
-            )
+            } else{
+                BarChart()
+            }
+
         }
 
         LazyColumn(Modifier.padding(horizontal = 16.dp), content = {
@@ -255,7 +264,41 @@ fun SingleLineChartWithGridLines(pointsData: List<Point>) {
             .height(300.dp),
         lineChartData = data
     )
+}
 
+@Composable
+fun BarChart() {
+    val stepSize = 5
+    val barsData = DataUtils.getBarChartData(
+        listSize = 8,
+        maxRange = 8,
+        barChartType = BarChartType.VERTICAL,
+        dataCategoryOptions = DataCategoryOptions()
+    )
+
+    val xAxisData = AxisData.Builder()
+        .axisStepSize(30.dp)
+        .steps(barsData.size - 1)
+        .bottomPadding(40.dp)
+        .axisLabelAngle(20f)
+        .labelData { index -> barsData[index].label }
+        .build()
+
+    val yAxisData = AxisData.Builder()
+        .steps(stepSize)
+        .labelAndAxisLinePadding(20.dp)
+        .axisOffset(20.dp)
+        .labelData { index -> (index * (100 / stepSize)).toString() }
+        .build()
+
+    val barChartData = BarChartData(
+        chartData = barsData,
+        xAxisData = xAxisData,
+        yAxisData = yAxisData,
+        backgroundColor = MaterialTheme.colors.surface
+    )
+    
+    BarChart(modifier = Modifier.height(350.dp), barChartData = barChartData)
 }
 
 fun formatTime(seconds: Long): String {
@@ -286,4 +329,45 @@ fun DropDownMenu(
             })
         }
     }
+}
+
+fun getPointDataForSingleCategoryForMonth(category: Category): List<Point> {
+    //по оси х - дни в месяце (30)
+    //по оси y - значения замеров в минутах за каждый день месяца, по оси y будут минуты
+    //мне нужно получить суммы замеров по конкретной категории за каждый день месяца(т.е список с 30 замерами)
+    //потом пройтись по этому списку и добавить в список pointsData последовательно для каждого дня из 30 это значение
+    val pointsData: List<Point> = listOf(
+        Point(1f, 40f),
+        Point(2f, 90f),
+        Point(3f, 0f),
+        Point(4f, 60f),
+        Point(5f, 10f),
+        Point(6f, 10f),
+        Point(7f, 10f),
+        Point(8f, 10f),
+        Point(9f, 10f),
+        Point(10f, 20f),
+        Point(11f, 30f),
+        Point(12f, 40f),
+        Point(13f, 50f),
+        Point(14f, 60f),
+        Point(15f, 70f),
+        Point(16f, 80f),
+        Point(17f, 90f),
+        Point(18f, 100f),
+        Point(19f, 90f),
+        Point(20f, 80f),
+        Point(21f, 70f),
+        Point(22f, 60f),
+        Point(23f, 50f),
+        Point(24f, 40f),
+        Point(25f, 30f),
+        Point(26f, 20f),
+        Point(27f, 10f),
+        Point(28f, 5f),
+        Point(29f, 2f),
+        Point(30f, 1f)
+    )
+
+    return pointsData
 }
