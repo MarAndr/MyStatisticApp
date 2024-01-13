@@ -7,8 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.tracker.trackDailyHub.database.Category
 import com.tracker.trackDailyHub.database.TimerData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -24,8 +26,8 @@ class AddNewCategoryViewModel @Inject constructor(
     private val _errorState = MutableStateFlow(AddNewCategoryValidationState())
     val errorState: StateFlow<AddNewCategoryValidationState> = _errorState
 
-    private val _events = MutableStateFlow<AddNewCategoryEvent?>(null)
-    val events: StateFlow<AddNewCategoryEvent?> = _events
+    private val _events = MutableSharedFlow<AddNewCategoryEvent>()
+    val events = _events.asSharedFlow()
 
     fun setCategoryName(name: String) {
         _newCategoryData.value = _newCategoryData.value.copy(categoryName = name)
@@ -39,40 +41,29 @@ class AddNewCategoryViewModel @Inject constructor(
         _newCategoryData.value = _newCategoryData.value.copy(icon = iconId)
     }
 
-    suspend fun createNewCategory() {
+    fun addTrackWithNewCategory(time: Long) = viewModelScope.launch {
         val validationResult = validateNewCategoryData(_newCategoryData.value)
         _errorState.value = validationResult
         handleEvents(validationResult)
-        if (validationResult.isValid()) {
-            val newCategory = Category(
-                name = _newCategoryData.value.categoryName,
-                color = _newCategoryData.value.color?.toArgb() ?: 0,
-                iconResourceId = _newCategoryData.value.icon ?: 0,
-            )
-            repository.insertCategory(newCategory)
+        if (!validationResult.isValid()) {
+            return@launch
         }
-    }
 
-    fun addTrackWithNewCategory(time: Long) {
-        val validationResult = validateNewCategoryData(_newCategoryData.value)
-        _errorState.value = validationResult
-        handleEvents(validationResult)
         val category = Category(
             name = _newCategoryData.value.categoryName,
             iconResourceId = _newCategoryData.value.icon ?: 0,
             color = _newCategoryData.value.color?.toArgb() ?: 0,
         )
+        repository.insertCategory(category)
+        val addedCategory = repository.getCategories().find { it.name == _newCategoryData.value.categoryName }
+
         val track = TimerData(
-            category = category,
+            category = addedCategory ?: return@launch,
             timeInSeconds = time,
         )
-        if (validationResult.isValid()) {
-            _events.value = AddNewCategoryEvent.ValidationSuccess
-            viewModelScope.launch {
-                repository.insertCategory(category)
-                repository.insertTrack(track)
-            }
-        }
+        repository.insertTrack(track)
+
+        _events.emit(AddNewCategoryEvent.ValidationSuccess)
     }
 
     private fun AddNewCategoryValidationState.isValid(): Boolean {
@@ -94,12 +85,15 @@ class AddNewCategoryViewModel @Inject constructor(
     }
 
     private fun handleEvents(validationState: AddNewCategoryValidationState) {
-        _events.value = when {
-            validationState.isCategoryFieldEmpty -> AddNewCategoryEvent.CategoryFieldEmpty
-            validationState.isCategoryNameNotUnique -> AddNewCategoryEvent.CategoryNameNotUnique
-            validationState.isColorNotChosen -> AddNewCategoryEvent.ColorNotChosen
-            validationState.isIconNotChosen -> AddNewCategoryEvent.IconNotChosen
-            else -> null
+        viewModelScope.launch {
+            val event = when {
+                validationState.isCategoryFieldEmpty -> AddNewCategoryEvent.CategoryFieldEmpty
+                validationState.isCategoryNameNotUnique -> AddNewCategoryEvent.CategoryNameNotUnique
+                validationState.isColorNotChosen -> AddNewCategoryEvent.ColorNotChosen
+                validationState.isIconNotChosen -> AddNewCategoryEvent.IconNotChosen
+                else -> null
+            }
+            _events.emit(event ?: return@launch)
         }
     }
 }

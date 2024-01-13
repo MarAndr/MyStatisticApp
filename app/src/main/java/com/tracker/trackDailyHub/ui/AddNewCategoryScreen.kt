@@ -29,7 +29,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,7 +50,6 @@ import com.tracker.trackDailyHub.popularColors5
 import com.tracker.trackDailyHub.popularColors6
 import com.tracker.trackDailyHub.ui.theme.Green800
 import com.tracker.trackdailyhub.R
-import kotlinx.coroutines.launch
 
 @Composable
 fun AddNewCategoryScreen(
@@ -89,12 +87,6 @@ fun AddNewCategoryScreen(
         mutableStateOf(false)
     }
 
-    var events by remember {
-        mutableStateOf<AddNewCategoryEvent>(AddNewCategoryEvent.CategoryFieldEmpty)
-    }
-
-    val coroutineScope = rememberCoroutineScope()
-
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val timeArg = navBackStackEntry?.arguments?.getLong("time") ?: 0L
 
@@ -105,15 +97,16 @@ fun AddNewCategoryScreen(
         }
     }
 
-    LaunchedEffect(viewModel.events){
-        viewModel.events.collect{
-            if (it != null) {
-                events = it
+    LaunchedEffect(viewModel) {
+        viewModel.events.collect { event ->
+            if (event == AddNewCategoryEvent.ValidationSuccess) {
+                navController.navigate(TrackDailyHubDestination.StartScreen.route)
+                snackbarHostState.showSnackbar("Added")
             }
         }
     }
 
-    LaunchedEffect(viewModel.errorState) {
+    LaunchedEffect(viewModel) {
         viewModel.errorState.collect { errorState ->
             renderValidationResults(errorState) {
                 when (it) {
@@ -142,7 +135,11 @@ fun AddNewCategoryScreen(
     }
 
     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = "Save the measurement to a new category", style = MaterialTheme.typography.h2, modifier = Modifier.padding(bottom = 16.dp))
+        Text(
+            text = "Save the measurement to a new category",
+            style = MaterialTheme.typography.h2,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
         OutlinedTextField(
             label = {
                 Text(text = "Type New Category")
@@ -192,27 +189,21 @@ fun AddNewCategoryScreen(
                 ),
                 shape = RoundedCornerShape(16.dp),
                 onClick = {
-                    coroutineScope.launch {
-                        onSaveClick()
-                        if (events == AddNewCategoryEvent.ValidationSuccess){
-                            navController.navigate(TrackDailyHubDestination.StartScreen.route)
-                            snackbarHostState.showSnackbar("Added")
-                        }
-                        viewModel.addTrackWithNewCategory(timeArg)
-                    }
+                    onSaveClick()
+                    viewModel.addTrackWithNewCategory(timeArg)
                 }
             ) {
                 Text(text = "Save")
             }
         }
         if (isColorClicked) {
-            ColorGrid(viewModel){
+            ColorGrid(viewModel) {
                 isColorClicked = false
             }
         }
 
-        if (isIconClicked){
-            IconGrid(viewModel){
+        if (isIconClicked) {
+            IconGrid(viewModel) {
                 isIconClicked = false
             }
         }

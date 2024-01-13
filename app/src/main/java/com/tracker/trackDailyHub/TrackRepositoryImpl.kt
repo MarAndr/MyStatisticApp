@@ -15,7 +15,7 @@ class TrackRepositoryImpl @Inject constructor(
     private val resources: Resources,
 ) : ITrackRepository {
     override suspend fun insertCategory(category: Category) {
-        categoryDao.insertUniqueCategory(category)
+        return categoryDao.insertUniqueCategory(category)
     }
 
     override suspend fun insertTrack(track: TimerData) {

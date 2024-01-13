@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -24,6 +25,12 @@ class StatisticViewModel @Inject constructor(
 
     private val period = MutableStateFlow(StatisticPeriod.DAY)
     private val selectedCategories = MutableStateFlow(emptyList<Category>())
+
+    init {
+        viewModelScope.launch {
+            selectedCategories.value = trackRepository.getCategories()
+        }
+    }
 
     val statisticScreenState: StateFlow<StatisticScreenState> = combine(
         period,
@@ -39,9 +46,9 @@ class StatisticViewModel @Inject constructor(
             totalTimeForEachCategory = countTotalTime(categories, period)
         )
     }.stateIn(
-        viewModelScope,
-        SharingStarted.Lazily,
-        StatisticScreenState(
+        scope = viewModelScope,
+        started = SharingStarted.Lazily,
+        initialValue = StatisticScreenState(
             categories = emptyList(),
             selectedCategories = emptyList(),
             selectedPeriod = StatisticPeriod.DAY,

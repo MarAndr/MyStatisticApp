@@ -45,7 +45,6 @@ fun TrackDailyHub(
             startDestination = TrackDailyHubDestination.StartScreen.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-
             composable(route = TrackDailyHubDestination.StartScreen.route) {
                 val startScreenViewModel: StartScreenViewModel = hiltViewModel()
                 StartScreen(
