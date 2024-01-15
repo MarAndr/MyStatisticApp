@@ -3,6 +3,7 @@ package com.tracker.trackDailyHub
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tracker.trackDailyHub.database.Category
+import com.tracker.trackDailyHub.database.DayTotalTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -43,7 +44,8 @@ class StatisticViewModel @Inject constructor(
             selectedPeriod = period,
             isAllCategoriesSelected = categories == selectedCategories,
             selectedChart = CHART.BAR,
-            totalTimeForEachCategory = countTotalTime(categories, period)
+            totalTimeForEachCategory = countTotalTime(categories, period),
+            totalTimeForCategoryLast30Days = getTotalTimeForCategoryLast30Days()
         )
     }.stateIn(
         scope = viewModelScope,
@@ -122,5 +124,10 @@ class StatisticViewModel @Inject constructor(
         } else {
             selectedCategories.value = statisticScreenState.value.categories
         }
+    }
+
+    private suspend fun getTotalTimeForCategoryLast30Days(): List<DayTotalTime> {
+        val category = statisticScreenState.value.categories.firstOrNull()
+        return trackRepository.getTotalTimeForCategoryLast30Days(category ?: return emptyList())
     }
 }

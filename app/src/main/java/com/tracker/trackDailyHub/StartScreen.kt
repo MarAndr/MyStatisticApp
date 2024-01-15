@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -36,12 +37,13 @@ import com.tracker.trackDailyHub.ui.NavigationCustomButtons
 import com.tracker.trackDailyHub.ui.theme.Gray100
 import com.tracker.trackDailyHub.ui.theme.Gray800
 import com.tracker.trackDailyHub.ui.theme.Green800
+import com.tracker.trackDailyHub.ui.theme.MyStatisticAppTheme
 import com.tracker.trackDailyHub.ui.theme.Red
 import com.tracker.trackdailyhub.R
 
 @Composable
 fun StartScreen(
-    navController: NavHostController,
+    navController: NavHostController? = null,
     viewModel: StartScreenViewModel,
 ) {
     var time by remember {
@@ -57,6 +59,16 @@ fun StartScreen(
         }
     }
 
+    StartScreen(time, timerState, viewModel, navController)
+}
+
+@Composable
+private fun StartScreen(
+    time: Long,
+    timerState: TimerState,
+    viewModel: StartScreenViewModel? = null,
+    navController: NavHostController? = null,
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -72,12 +84,12 @@ fun StartScreen(
 
         SetControlButtons(
             timerState = timerState,
-            onStartButtonClick = { viewModel.startTimer() },
-            onPauseButtonClick = { viewModel.pauseTimer() },
-            onResumeButtonClick = { viewModel.startTimer() },
+            onStartButtonClick = { viewModel?.startTimer() },
+            onPauseButtonClick = { viewModel?.pauseTimer() },
+            onResumeButtonClick = { viewModel?.startTimer() },
             onStopButtonClick = {
-                viewModel.pauseTimer()
-                navController.navigate(TrackDailyHubDestination.AddSurveyScreen.withArgs(time))
+                viewModel?.pauseTimer()
+                navController?.navigate(TrackDailyHubDestination.AddSurveyScreen.withArgs(time))
             },
         )
 
@@ -87,7 +99,7 @@ fun StartScreen(
             modifier = Modifier
                 .background(Gray100, shape = RoundedCornerShape(100)),
             onStatisticClick = {
-                navController.navigate(TrackDailyHubDestination.StatisticScreen.route)
+                navController?.navigate(TrackDailyHubDestination.StatisticScreen.route)
             },
         )
         Spacer(modifier = Modifier.height(32.dp))
@@ -191,4 +203,10 @@ fun formatTime(currentTime: Long): String {
     return "%02d:%02d:%02d".format(hours, minutes, seconds)
 }
 
+
+@Preview(showBackground = true)
+@Composable
+private fun StartScreenPreview() = MyStatisticAppTheme {
+    StartScreen(time = 10, timerState = TimerState.PAUSED, navController = null)
+}
 

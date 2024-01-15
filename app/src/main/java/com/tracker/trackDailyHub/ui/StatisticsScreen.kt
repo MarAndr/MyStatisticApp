@@ -56,16 +56,17 @@ import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
 import com.tracker.trackDailyHub.StatisticPeriod
 import com.tracker.trackDailyHub.StatisticViewModel
-import com.tracker.trackDailyHub.database.AppDatabase
-import com.tracker.trackDailyHub.database.Category
+import com.tracker.trackDailyHub.database.DayTotalTime
 import com.tracker.trackdailyhub.R
+import java.text.SimpleDateFormat
+import java.time.ZonedDateTime
+import java.util.Date
 
 
 @Composable
 fun StatisticScreen(
     viewModel: StatisticViewModel,
     navController: NavHostController,
-    db: AppDatabase,
 ) {
     val statisticScreenState by viewModel.statisticScreenState.collectAsState()
 
@@ -74,14 +75,7 @@ fun StatisticScreen(
     val totalTimeForEachCategory = statisticScreenState.totalTimeForEachCategory
     val isAllCategoriesSelected = statisticScreenState.isAllCategoriesSelected
     val selectedCategories = statisticScreenState.selectedCategories
-
-    val timers = db.timerDao().getAllTimers()
-    val timersState = timers.collectAsState(initial = listOf()).value
-    val categoryToTotalTime = mutableMapOf<String, Long>()
-
-    var totalTime by remember {
-        mutableStateOf(0L)
-    }
+    val totalTimeForCategoryLast30Days = statisticScreenState.totalTimeForCategoryLast30Days
 
     var isDropDownPeriodShown by remember {
         mutableStateOf(false)
@@ -89,11 +83,6 @@ fun StatisticScreen(
 
     var isItemControlledByAllItem by remember {
         mutableStateOf(true)
-    }
-
-    timersState.forEach { timerData ->
-        categoryToTotalTime[timerData.category.name] =
-            categoryToTotalTime.getOrDefault(timerData.category.name, 0) + timerData.timeInSeconds
     }
 
     Column(
@@ -143,15 +132,9 @@ fun StatisticScreen(
             }
         }
         Box(Modifier.padding(horizontal = 16.dp)) {
-            if (selectedCategories.size == 1){
-                SingleLineChartWithGridLines(
-                    DataUtils.getLineChartData(
-                        100,
-                        start = 50,
-                        maxRange = 100
-                    )
-                )
-            } else{
+            if (selectedCategories.size == 1) {
+                SingleLineChartWithGridLines(totalTimeForCategoryLast30Days)
+            } else {
                 BarChart()
             }
 
@@ -189,7 +172,7 @@ fun StatisticScreen(
                         contentDescription = "",
                         tint = Color.Unspecified
                     )
-                    Text(text = "${category.name} - ${totalTimeForEachCategory[category]?:0L}")
+                    Text(text = "${category.name} - ${totalTimeForEachCategory[category] ?: 0L}")
                 }
             }
         })
@@ -197,7 +180,8 @@ fun StatisticScreen(
 }
 
 @Composable
-fun SingleLineChartWithGridLines(pointsData: List<Point>) {
+fun SingleLineChartWithGridLines(totalTimeForCategoryLast30Days: List<DayTotalTime>) {
+    val pointsData = getPointDataForSingleCategoryFromTotalList(totalTimeForCategoryLast30Days)
     val steps = 5
     val xAxisData = AxisData.Builder()
         .axisStepSize(30.dp)
@@ -272,7 +256,7 @@ fun BarChart() {
         yAxisData = yAxisData,
         backgroundColor = MaterialTheme.colors.surface
     )
-    
+
     BarChart(modifier = Modifier.height(350.dp), barChartData = barChartData)
 }
 
@@ -306,43 +290,19 @@ fun DropDownMenu(
     }
 }
 
-fun getPointDataForSingleCategoryForMonth(category: Category): List<Point> {
-    //по оси х - дни в месяце (30)
-    //по оси y - значения замеров в минутах за каждый день месяца, по оси y будут минуты
-    //мне нужно получить суммы замеров по конкретной категории за каждый день месяца(т.е список с 30 замерами)
-    //потом пройтись по этому списку и добавить в список pointsData последовательно для каждого дня из 30 это значение
-    val pointsData: List<Point> = listOf(
-        Point(1f, 40f),
-        Point(2f, 90f),
-        Point(3f, 0f),
-        Point(4f, 60f),
-        Point(5f, 10f),
-        Point(6f, 10f),
-        Point(7f, 10f),
-        Point(8f, 10f),
-        Point(9f, 10f),
-        Point(10f, 20f),
-        Point(11f, 30f),
-        Point(12f, 40f),
-        Point(13f, 50f),
-        Point(14f, 60f),
-        Point(15f, 70f),
-        Point(16f, 80f),
-        Point(17f, 90f),
-        Point(18f, 100f),
-        Point(19f, 90f),
-        Point(20f, 80f),
-        Point(21f, 70f),
-        Point(22f, 60f),
-        Point(23f, 50f),
-        Point(24f, 40f),
-        Point(25f, 30f),
-        Point(26f, 20f),
-        Point(27f, 10f),
-        Point(28f, 5f),
-        Point(29f, 2f),
-        Point(30f, 1f)
-    )
+fun getPointDataForSingleCategoryFromTotalList(totalTimeForCategoryLast30Days: List<DayTotalTime>): List<Point> {
+    val formatter = SimpleDateFormat("yyyy-MM-dd")
 
-    return pointsData
+    val pointData = mutableListOf<Point>()
+    repeat(30) {
+        val date = ZonedDateTime.now().minusDays(it.toLong()).toInstant()
+        val formatted = formatter.format(Date.from(date))
+        val timeData = totalTimeForCategoryLast30Days.find { formatted == it.day }
+        if (timeData != null) {
+            pointData.add(Point(x = it.toFloat(), y = timeData.totalTime.toFloat()))
+        } else {
+            pointData.add(Point(x = it.toFloat(), y = 0f))
+        }
+    }
+    return pointData
 }

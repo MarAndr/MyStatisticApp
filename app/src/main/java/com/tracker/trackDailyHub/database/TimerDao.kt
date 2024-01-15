@@ -28,4 +28,7 @@ interface TimerDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTimer(timer: TimerData)
+
+    @Query("SELECT strftime('%Y-%m-%d', date) as day, SUM(timeInSeconds) as totalTime FROM TimerData WHERE category = :category AND date >= date('now', '-29 days') GROUP BY day ORDER BY day DESC")
+    suspend fun getTotalTimeForCategoryLast30Days(category: Category): List<DayTotalTime>
 }

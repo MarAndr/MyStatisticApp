@@ -1,6 +1,7 @@
 package com.tracker.trackDailyHub
 
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
@@ -16,7 +17,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.tracker.trackDailyHub.database.AppDatabase
 import com.tracker.trackDailyHub.ui.AddMeasurementScreen
 import com.tracker.trackDailyHub.ui.AddNewCategoryScreen
 import com.tracker.trackDailyHub.ui.StatisticScreen
@@ -24,7 +24,6 @@ import com.tracker.trackDailyHub.ui.StatisticScreen
 @Composable
 fun TrackDailyHub(
     navController: NavHostController = rememberNavController(),
-    db: AppDatabase,
 ) {
 
     val snackBarHostState = remember {
@@ -32,6 +31,7 @@ fun TrackDailyHub(
     }
 
     Scaffold(
+        modifier = Modifier.fillMaxSize(),
         snackbarHost = {
             SnackbarHost(
                 hostState = snackBarHostState,
@@ -99,7 +99,6 @@ fun TrackDailyHub(
                 StatisticScreen(
                     viewModel = statisticViewModel,
                     navController = navController,
-                    db = db
                 )
             }
         }

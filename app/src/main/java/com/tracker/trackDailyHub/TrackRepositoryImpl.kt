@@ -3,6 +3,7 @@ package com.tracker.trackDailyHub
 import android.content.res.Resources
 import com.tracker.trackDailyHub.database.Category
 import com.tracker.trackDailyHub.database.CategoryDao
+import com.tracker.trackDailyHub.database.DayTotalTime
 import com.tracker.trackDailyHub.database.TimerDao
 import com.tracker.trackDailyHub.database.TimerData
 import com.tracker.trackdailyhub.R
@@ -67,5 +68,9 @@ class TrackRepositoryImpl @Inject constructor(
         }
         defaultIcons.recycle()
         return categoryDao.insertCategories(categories)
+    }
+
+    override suspend fun getTotalTimeForCategoryLast30Days(category: Category): List<DayTotalTime> {
+        return timerDao.getTotalTimeForCategoryLast30Days(category)
     }
 }
