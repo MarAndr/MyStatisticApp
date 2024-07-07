@@ -61,14 +61,18 @@ fun TrackDailyHub(
                         nullable = false
                     }
                 )
-            ) {
+            ) { backStackEntry ->
+                val startScreenEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(TrackDailyHubDestination.StartScreen.route)
+                }
                 val addMeasurementScreenViewModel: AddMeasurementScreenViewModel = hiltViewModel()
+                val startScreenViewModel: StartScreenViewModel = hiltViewModel(startScreenEntry)
                 AddMeasurementScreen(
                     navController = navController,
                     viewModel = addMeasurementScreenViewModel,
                     snackbarHostState = snackBarHostState,
                     onSaveClick = {
-//                        startScreenViewModel.dropTimer()
+                        startScreenViewModel.dropTimer()
                     },
                     onNavigateBack = {
                         navController.navigateUp()
@@ -83,14 +87,18 @@ fun TrackDailyHub(
                         nullable = false
                     }
                 )
-            ) {
+            ) { backStackEntry ->
+                val startScreenEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(TrackDailyHubDestination.StartScreen.route)
+                }
                 val addNewCategoryViewModel: AddNewCategoryViewModel = hiltViewModel()
+                val startScreenViewModel: StartScreenViewModel = hiltViewModel(startScreenEntry)
                 AddNewCategoryScreen(
                     navController = navController,
                     snackbarHostState = snackBarHostState,
                     viewModel = addNewCategoryViewModel,
                     onSaveClick = {
-//                        startScreenViewModel.dropTimer()
+                        startScreenViewModel.dropTimer()
                     },
                 )
             }
